@@ -7,4 +7,5 @@ import (
 
 func init() {
     beego.Router("/", &controllers.MainController{})
+	beego.Router("/seckill", &controllers.SecKillController{}, "*:SecKillProduct")
 }
