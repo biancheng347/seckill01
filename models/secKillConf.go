@@ -22,11 +22,22 @@ type SecProductInfoConf struct {
 	Remain    int
 }
 
+type AccessLimitConf struct {
+	IPSecAccessLimit   int
+	UserSecAccessLimit int
+	IPMinAccessLimit   int
+	UserMinAccessLimit int
+}
+
 type SecKillConf struct {
 	RedisBlackConf RedisConf
 
 	RWSecProductLock  sync.RWMutex
 	secProductInfoMap map[int]*SecProductInfoConf
+	idBlackMap        map[int]bool
+	ipBlackMap        map[string]bool
+	secLimitMgr       *SecLimitMgr
+	AccessLimitConf   AccessLimitConf
 }
 
 func NewSecKillConf() *SecKillConf {
