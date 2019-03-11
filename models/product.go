@@ -34,10 +34,16 @@ func secInfoByIf(productId int) (data map[string]interface{}, code int, err erro
 	end := false
 	status := ""
 
+	if seckillconf.secProductInfoMap == nil {
+		code = ErrClientClosed
+		err = fmt.Errorf("sec product info map is nil")
+		return
+	}
 	v, ok := seckillconf.secProductInfoMap[productId]
 	if !ok {
 		code = ErrNotFoundProductId
 		err = fmt.Errorf("not found this product for id")
+		return
 	}
 	now := time.Now().Unix()
 	if now-v.StartTime < 0 {

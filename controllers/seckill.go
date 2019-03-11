@@ -3,7 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/astaxie/beego"
-	"secKill/secKill/models"
+	"seckill01/models"
 	"strings"
 	"time"
 )
@@ -109,4 +109,14 @@ func (s *SecKillController) SecKillProduct() {
 	}
 
 	fmt.Println("client request ", secRequest)
+
+	data, code, err := secRequest.SecKill()
+	if err != nil {
+		result[Code] = code
+		result[Message] = "invalid product Id"
+		return
+	}
+
+	result[Code] = code
+	result[Data] = data
 }
