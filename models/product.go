@@ -154,6 +154,7 @@ func (req *SecRequest) SecKill() (data map[string]interface{}, code int, err err
 	defer seckillconf.RWSecProductLock.RUnlock()
 
 	if err = antiSpam(req); err != nil {
+		code = ErrInvalidRequest
 		return
 	}
 
