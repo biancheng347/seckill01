@@ -12,5 +12,11 @@ func main() {
 		panic(err)
 		return
 	}
+
+	err = config.InitConfig()
+	if err != nil {
+		panic(err)
+		return
+	}
 	beego.Run()
 }
