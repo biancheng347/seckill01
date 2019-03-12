@@ -151,20 +151,17 @@ func initLimitConfig() (err error) {
 
 func InitConfig() (err error) {
 	//配置黑名单Redis
-	err = initRedisBlackConfig()
-	if err != nil {
+	if err = initRedisBlackConfig();err != nil {
 		return
 	}
 
 	//配置接入层->业务逻辑层
-	err = initRedisProxyToLayerConfig()
-	if err != nil {
+	if err = initRedisProxyToLayerConfig();err != nil {
 		return
 	}
 
 	//配置业务逻辑层->接入层
-	err = initRedisLayerToProxyConfig()
-	if err != nil {
+	if err = initRedisLayerToProxyConfig();err != nil {
 		return
 	}
 
@@ -175,14 +172,12 @@ func InitConfig() (err error) {
 	//}
 
 	//配置日志文件相关
-	err = initLogConfig()
-	if err != nil {
+	if err = initLogConfig();err != nil {
 		return
 	}
 
 	//频率限制
-	err = initLimitConfig()
-	if err != nil {
+	if err = initLimitConfig();err != nil {
 		return
 	}
 	return
