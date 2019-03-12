@@ -6,6 +6,10 @@ import (
 )
 
 type SecResult struct {
+	ProductId int
+	UserId    int
+	Code      int
+	Token     string
 }
 
 type SecRequest struct {

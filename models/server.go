@@ -1,6 +1,8 @@
 package models
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/garyburd/redigo/redis"
 	"strconv"
@@ -86,11 +88,63 @@ func initProxyToLayerRedis() (err error) {
 }
 
 func WriteHandle() {
+	for  {
+		req := <- seckillconf.SecReqChan
+		conn := seckillconf.ProxyToLayerRedisPool.Get()
 
+		data,err := json.Marshal(req)
+		if err != nil {
+			logs.Error("json marshal failed,err:%v, req: %v",err,req)
+			conn.Close()
+			continue
+		}
+
+		if _,err = conn.Do("LPUSH","sec_queue",string(data));err != nil {
+			logs.Error("lpush failed,err:%v, req: %v",err,req)
+			conn.Close()
+			continue
+		}
+		conn.Close()
+	}
 }
 
 func ReadHandle() {
+	for {
+		conn := seckillconf.ProxyToLayerRedisPool.Get()
+		replay,err := conn.Do("RPOP","recv_queueu")
+		data,err := redis.String(replay,err)
+		if err == redis.ErrNil {
+			time.Sleep(time.Second)
+			conn.Close()
+			continue
+		}
+		logs.Debug("rpop from redis succ: data: %s",string(data))
+		if err != nil {
+			logs.Error("rpop failed,err: %v",err)
+			conn.Close()
+			continue
+		}
 
+		var result SecResult
+		if	err = json.Unmarshal([]byte(data),&result); err != nil {
+			logs.Error("json unmarshal failed,err:%v",err)
+			continue
+		}
+
+		userkey := fmt.Sprintf("%s_%s",result.UserId,result.ProductId)
+
+		seckillconf.UserConnMapLock.Lock()
+		resultChan,ok := seckillconf.UserConnMap[userkey]
+		seckillconf.UserConnMapLock.Unlock()
+		if !ok {
+			conn.Close()
+			logs.Warn("user not found: %v",userkey)
+			continue
+		}
+
+		resultChan <- &result
+		conn.Close()
+	}
 }
 
 func initRedisProcessFunc() {

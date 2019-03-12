@@ -59,15 +59,18 @@ type SecKillConf struct {
 	RWSecProductLock  sync.RWMutex
 	secProductInfoMap map[int]*SecProductInfoConf //
 
-	SecReqChan     chan *SecRequest
+	SecReqChan     chan *SecRequest//
 	SecReqChanSize int
+
+	UserConnMap     map[string]chan *SecResult //
+	UserConnMapLock sync.Mutex
 
 	EtcdConf EtcdConf
 	CookieSecretKey string
 	ReferWhiteList []string
 	AccessLimitConf   AccessLimitConf
 	secLimitMgr       *SecLimitMgr //
-	UserConnMap     map[string]chan *SecResult //
+
 }
 
 func NewSecKillConf() *SecKillConf {
