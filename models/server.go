@@ -33,9 +33,6 @@ func initRedis(conf RedisConf) (redisPool  *redis.Pool,err error) {
 }
 
 func loadBlackList() (err error) {
-	seckillconf.ipBlackMap = make(map[string]bool, 10000)
-	seckillconf.idBlackMap = make(map[int]bool, 10000)
-
 	pool,err := initRedis(seckillconf.RedisBlackConf)
 	if err != nil {
 		logs.Error("init black redis failed,err: %v",err)
@@ -106,8 +103,8 @@ func initRedisProcessFunc() {
 	}
 }
 
-func InitServer(secKillConfig *SecKillConf) (err error) {
-	seckillconf = secKillConfig
+func InitServer(sec *SecKillConf) (err error) {
+	seckillconf = sec
 
 	if err = loadBlackList();err != nil {
 		logs.Error("load black list err: %v",err)
@@ -120,14 +117,6 @@ func InitServer(secKillConfig *SecKillConf) (err error) {
 		return
 	}
 
-	seckillconf.secLimitMgr = &SecLimitMgr{
-		UserLimitMap:make(map[int]*Limit,10000),
-		IpLimitMap:make(map[string]*Limit,10000),
-	}
-	seckillconf.SecReqChan = make(chan *SecRequest,seckillconf.SecReqChanSize)
-	seckillconf.UserConnMap = make(map[string]chan *SecResult,10000)
-
 	initRedisProcessFunc()
-
 	return
 }
