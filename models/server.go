@@ -128,13 +128,11 @@ func ReadHandle() {
 		if err == redis.ErrNil {
 			time.Sleep(time.Second)
 			return
-		}
-		logs.Debug("rpop from redis succ: data: %s",string(data))
-		if err != nil {
+		}else if err != nil {
 			logs.Error("rpop failed,err: %v",err)
 			return
 		}
-
+		logs.Debug("rpop from redis succ: data: %s",string(data))
 		var result SecResult
 		if	err = json.Unmarshal([]byte(data),&result); err != nil {
 			logs.Error("json unmarshal failed,err:%v",err)
