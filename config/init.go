@@ -80,12 +80,19 @@ func initRedisBlackConfig() (err error) {
 
 
 
-
+func appConfigIntValue(num *int,key string) (err error) {
+	i,err  := appConfigInt(key)
+	if err != nil {
+		return
+	}
+	*num = i
+	return
+}
 
 
 
 func initRedisLayerToProxyConfig() (err error) {
-	err = initRedisConfig(&secKillConf.RedisProxyToLayerConf,
+	err = initRedisConfig(&secKillConf.RedisLayerToProxyConf,
 		"redis_layerToProxy_addr",
 		"redis_layerToProxy_idle",
 		"redis_layerToProxy_active",
@@ -94,17 +101,15 @@ func initRedisLayerToProxyConfig() (err error) {
 		return
 	}
 
-	i,err  := appConfigInt("write_layerToProxy_goroutine_num")
+	err = appConfigIntValue(&secKillConf.WriteLayerToProxyGoroutineNum,"write_layerToProxy_goroutine_num")
 	if err != nil {
 		return
 	}
-	secKillConf.WriteLayerToProxyGoroutineNum = i
 
-	i,err  = appConfigInt("read_layerToProxy_goroutine_num")
+	err = appConfigIntValue(&secKillConf.ReadLayerToProxyGoroutineNum,"read_layerToProxy_goroutine_num")
 	if err != nil {
 		return
 	}
-	secKillConf.ReadLayerToProxyGoroutineNum = i
 
 	return
 }
@@ -112,47 +117,24 @@ func initRedisLayerToProxyConfig() (err error) {
 
 
 func initRedisProxyToLayerConfig() (err error) {
-	redisProxyToLayerAddr := beego.AppConfig.String("redis_proxyToLayer_addr")
-	if len(redisProxyToLayerAddr) == 0 {
-		err = fmt.Errorf("initRedisProxyToLayerConfig redisProxyToLayerAddr failed,err")
-		return
-	}
-	secKillConf.RedisProxyToLayerConf.RedisAddr = redisProxyToLayerAddr
-
-	redisProxyToLayerIdle, err := beego.AppConfig.Int("redis_proxyToLayer_idle")
+	err = initRedisConfig(&secKillConf.RedisProxyToLayerConf,
+		"redis_proxyToLayer_addr",
+		"redis_proxyToLayer_idle",
+		"redis_proxyToLayer_active",
+		"redis_proxyToLayer_idle_timeout")
 	if err != nil {
-		err = fmt.Errorf("initRedisProxyToLayerConfig redisProxyToLayerIdle failed,err:%v", err)
 		return
 	}
-	secKillConf.RedisProxyToLayerConf.RedisMaxIdle = redisProxyToLayerIdle
 
-	redisProxyToLayerActvie, err := beego.AppConfig.Int("redis_proxyToLayer_active")
+	err = appConfigIntValue(&secKillConf.WriteProxyToLayerGoroutineNum,"write_proxyToLayer_goroutine_num")
 	if err != nil {
-		err = fmt.Errorf("initRedisProxyToLayerConfig redisProxyToLayerActvie failed,err:%v", err)
 		return
 	}
-	secKillConf.RedisProxyToLayerConf.RedisMaxActive = redisProxyToLayerActvie
 
-	redisProxyToLayerIdleTimeout, err := beego.AppConfig.Int("redis_proxyToLayer_idle_timeout")
+	err = appConfigIntValue(&secKillConf.ReadProxyToLayerGoroutineNum,"read_proxyToLayer_goroutine_num")
 	if err != nil {
-		err = fmt.Errorf("initRedisProxyToLayerConfig redisProxyToLayerIdleTimeout failed,err:%v", err)
 		return
 	}
-	secKillConf.RedisProxyToLayerConf.RedisIdleTimeout = redisProxyToLayerIdleTimeout
-
-	writeProxyToLayerGoroutineNum, err := beego.AppConfig.Int("write_proxyToLayer_goroutine_num")
-	if err != nil {
-		err = fmt.Errorf("initRedisProxyToLayerConfig writeProxyToLayerGoroutineNum failed,err:%v", err)
-		return
-	}
-	secKillConf.WriteProxyToLayerGoroutineNum = writeProxyToLayerGoroutineNum
-
-	readProxyToLayerGoroutineNum, err := beego.AppConfig.Int("read_proxyToLayer_goroutine_num")
-	if err != nil {
-		err = fmt.Errorf("initRedisProxyToLayerConfig readProxyToLayerGoroutineNum failed,err:%v", err)
-		return
-	}
-	secKillConf.ReadProxyToLayerGoroutineNum = readProxyToLayerGoroutineNum
 
 	return
 }
