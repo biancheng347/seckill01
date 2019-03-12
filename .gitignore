@@ -10,6 +10,7 @@
 
 #project has .idear/workspace.xml 
 sec.log
+seckill01
 .idea/workspace.xml
 
 # Output of the go coverage tool, specifically when used with LiteIDE
