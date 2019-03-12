@@ -31,33 +31,46 @@ func appConfigInt(key string)(i int,err error) {
 }
 
 
+func appConfigIntValue(num *int,key string) (err error) {
+	i,err  := appConfigInt(key)
+	if err != nil {
+		return
+	}
+	*num = i
+	return
+}
+
+func appConfigStringValue(str *string,key string) (err error) {
+	s,err := appConfigString(key)
+	if err != nil {
+		return
+	}
+	*str = s
+	return
+}
 
 func initRedisConfig(redisConf *models.RedisConf,keys ...string) (err error) {
 	for _,v := range keys {
 		if strings.HasSuffix(v,"addr") {
-			str,err := appConfigString(v)
+			err = appConfigStringValue(&redisConf.RedisAddr,v)
 			if err != nil {
 				break
 			}
-			redisConf.RedisAddr= str
 		}else if strings.HasSuffix(v,"idle") {
-			i,err  := appConfigInt(v)
+			err = appConfigIntValue(&redisConf.RedisMaxIdle,v)
 			if err != nil {
 				break
 			}
-			redisConf.RedisMaxIdle = i
 		}else if strings.HasSuffix(v,"active") {
-			i,err  := appConfigInt(v)
+			err = appConfigIntValue(&redisConf.RedisMaxActive,v)
 			if err != nil {
 				break
 			}
-			redisConf.RedisMaxActive = i
 		}else if strings.HasSuffix(v,"timeout") {
-			i,err  := appConfigInt(v)
+			err = appConfigIntValue(&redisConf.RedisIdleTimeout,v)
 			if err != nil {
 				break
 			}
-			redisConf.RedisIdleTimeout = i
 		}
 	}
 	return
@@ -72,20 +85,6 @@ func initRedisBlackConfig() (err error) {
 	if err != nil {
 		return
 	}
-	return
-}
-
-
-
-
-
-
-func appConfigIntValue(num *int,key string) (err error) {
-	i,err  := appConfigInt(key)
-	if err != nil {
-		return
-	}
-	*num = i
 	return
 }
 
@@ -140,27 +139,20 @@ func initRedisProxyToLayerConfig() (err error) {
 }
 
 func initLogConfig() (err error) {
-	logPath := beego.AppConfig.String("log_path")
-	if len(logPath) == 0 {
-		err = fmt.Errorf("initLogConfig logPath failed,err")
+	err = appConfigStringValue(&secKillConf.LogPath,"log_path")
+	if err != nil {
 		return
 	}
-	secKillConf.LogPath = logPath
 
-	logLevel := beego.AppConfig.String("log_level")
-	if len(logLevel) == 0 {
-		err = fmt.Errorf("initLogConfig logLevel failed,err")
+	err = appConfigStringValue(&secKillConf.LogLevel,"log_level")
+	if err != nil {
 		return
 	}
-	secKillConf.LogLevel = logLevel
 
-	cookieSecretKey := beego.AppConfig.String("cookie_secretkey")
-	if len(cookieSecretKey) == 0 {
-		err = fmt.Errorf("initLogConfig cookieSecretKey failed,err")
+	err = appConfigStringValue(&secKillConf.CookieSecretKey,"cookie_secretkey")
+	if err != nil {
 		return
 	}
-	secKillConf.CookieSecretKey = cookieSecretKey
-
 	return
 }
 
