@@ -124,11 +124,9 @@ func initLogConfig() (err error) {
 	if err = appConfigStringValue(&secKillConf.LogPath, "log_path"); err != nil {
 		return
 	}
-
 	if err = appConfigStringValue(&secKillConf.LogLevel, "log_level"); err != nil {
 		return
 	}
-
 	if err = appConfigStringValue(&secKillConf.CookieSecretKey, "cookie_secretkey"); err != nil {
 		return
 	}
@@ -136,39 +134,18 @@ func initLogConfig() (err error) {
 }
 
 func initLimitConfig() (err error) {
-
 	if err = appConfigIntValue(&secKillConf.AccessLimitConf.IPSecAccessLimit, "ip_sec_access_limit"); err != nil {
 		return
 	}
-
-	ipSecAccessLimit, err := beego.AppConfig.Int("ip_sec_access_limit")
-	if err != nil {
-		err = fmt.Errorf("initLimitConfig ipSecAccessLimit failed,err:%v", err)
+	if err = appConfigIntValue(&secKillConf.AccessLimitConf.UserSecAccessLimit, "user_sec_access_limit"); err != nil {
 		return
 	}
-	secKillConf.AccessLimitConf.IPSecAccessLimit = ipSecAccessLimit
-
-	userSecAccessLimit, err := beego.AppConfig.Int("user_sec_access_limit")
-	if err != nil {
-		err = fmt.Errorf("initLimitConfig userSecAccessLimit failed,err:%v", err)
+	if err = appConfigIntValue(&secKillConf.AccessLimitConf.IPMinAccessLimit, "ip_min_access_limit"); err != nil {
 		return
 	}
-	secKillConf.AccessLimitConf.UserSecAccessLimit = userSecAccessLimit
-
-	ipMinAccessLimit, err := beego.AppConfig.Int("ip_min_access_limit")
-	if err != nil {
-		err = fmt.Errorf("initLimitConfig ipMinAccessLimit failed,err:%v", err)
+	if err = appConfigIntValue(&secKillConf.AccessLimitConf.UserMinAccessLimit, "user_min_access_limit"); err != nil {
 		return
 	}
-	secKillConf.AccessLimitConf.IPMinAccessLimit = ipMinAccessLimit
-
-	userMinAccessLimit, err := beego.AppConfig.Int("user_min_access_limit")
-	if err != nil {
-		err = fmt.Errorf("initLimitConfig userMinAccessLimit failed,err:%v", err)
-		return
-	}
-	secKillConf.AccessLimitConf.UserMinAccessLimit = userMinAccessLimit
-
 	return
 }
 
@@ -208,6 +185,5 @@ func InitConfig() (err error) {
 	if err != nil {
 		return
 	}
-
 	return
 }
