@@ -1,9 +1,8 @@
 package models
 
-import "sync"
-
-var (
-	seckillconf = NewSecKillConf()
+import (
+	"github.com/garyburd/redigo/redis"
+	"sync"
 )
 
 type RedisConf struct {
@@ -34,6 +33,10 @@ type SecKillConf struct {
 	RedisLayerToProxyConf RedisConf
 	RedisProxyToLayerConf RedisConf
 
+	BlackRedisPool        *redis.Pool
+	ProxyToLayerRedisPool redis.Pool
+	LayerToProxyResiPool  redis.Pool
+
 	RWSecProductLock  sync.RWMutex
 	secProductInfoMap map[int]*SecProductInfoConf
 	idBlackMap        map[int]bool
@@ -42,12 +45,12 @@ type SecKillConf struct {
 	AccessLimitConf   AccessLimitConf
 
 	WriteLayerToProxyGoroutineNum int
-	ReadLayerToProxyGoroutineNum int
+	ReadLayerToProxyGoroutineNum  int
 
 	WriteProxyToLayerGoroutineNum int
-	ReadProxyToLayerGoroutineNum int
+	ReadProxyToLayerGoroutineNum  int
 
-	LogPath string
+	LogPath  string
 	LogLevel string
 
 	CookieSecretKey string
@@ -55,6 +58,6 @@ type SecKillConf struct {
 
 func NewSecKillConf() *SecKillConf {
 	return &SecKillConf{
-		secProductInfoMap: make(map[int]*SecProductInfoConf,1024),
+		secProductInfoMap: make(map[int]*SecProductInfoConf, 1024),
 	}
 }

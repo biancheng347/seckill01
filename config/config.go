@@ -35,10 +35,6 @@ func initLogger() (err error)  {
 	return
 }
 
-
-
-
-
 func InitSecKill() (err error) {
 
 	err = initLogger()
