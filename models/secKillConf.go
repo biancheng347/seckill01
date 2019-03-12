@@ -34,8 +34,8 @@ type SecKillConf struct {
 	RedisProxyToLayerConf RedisConf
 
 	BlackRedisPool        *redis.Pool
-	ProxyToLayerRedisPool redis.Pool
-	LayerToProxyResiPool  redis.Pool
+	ProxyToLayerRedisPool *redis.Pool
+	LayerToProxyRedisPool *redis.Pool
 
 	RWSecProductLock  sync.RWMutex
 	secProductInfoMap map[int]*SecProductInfoConf

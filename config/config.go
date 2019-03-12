@@ -35,10 +35,14 @@ func initLogger() (err error)  {
 	return
 }
 
+func loadSecConfig() (err error) {
+
+	return
+}
+
 func InitSecKill() (err error) {
 
-	err = initLogger()
-	if err != nil {
+	if err = initLogger();err != nil {
 		return
 	}
 
@@ -47,11 +51,10 @@ func InitSecKill() (err error) {
 	//	return
 	//}
 	//
-	//err = loadSecConfig()
-	//if err != nil {
-	//	return
-	//}
-	//
+	if err = loadSecConfig();err != nil {
+		return
+	}
+
 	//models.InitServer(secKillConf)
 	//initSecProcutWatcher()
 	return
