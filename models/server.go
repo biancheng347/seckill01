@@ -96,47 +96,49 @@ func initProxyToLayerRedis() (err error) {
 }
 
 func WriteHandle() {
-	for  {
-		req := <- seckillconf.SecReqChan
+	f := func(req *SecRequest) {
 		conn := seckillconf.ProxyToLayerRedisPool.Get()
+		defer  conn.Close()
 
 		data,err := json.Marshal(req)
 		if err != nil {
 			logs.Error("json marshal failed,err:%v, req: %v",err,req)
-			conn.Close()
-			continue
+			return
 		}
 
 		if _,err = conn.Do("LPUSH","sec_queue",string(data));err != nil {
 			logs.Error("lpush failed,err:%v, req: %v",err,req)
-			conn.Close()
-			continue
+			return
 		}
-		conn.Close()
+		return
+	}
+	for  {
+		req := <- seckillconf.SecReqChan
+		f(req)
 	}
 }
 
 func ReadHandle() {
-	for {
+	f := func () {
 		conn := seckillconf.ProxyToLayerRedisPool.Get()
+		defer conn.Close()
+
 		replay,err := conn.Do("RPOP","recv_queueu")
 		data,err := redis.String(replay,err)
 		if err == redis.ErrNil {
 			time.Sleep(time.Second)
-			conn.Close()
-			continue
+			return
 		}
 		logs.Debug("rpop from redis succ: data: %s",string(data))
 		if err != nil {
 			logs.Error("rpop failed,err: %v",err)
-			conn.Close()
-			continue
+			return
 		}
 
 		var result SecResult
 		if	err = json.Unmarshal([]byte(data),&result); err != nil {
 			logs.Error("json unmarshal failed,err:%v",err)
-			continue
+			return
 		}
 
 		userkey := fmt.Sprintf("%s_%s",result.UserId,result.ProductId)
@@ -145,13 +147,15 @@ func ReadHandle() {
 		resultChan,ok := seckillconf.UserConnMap[userkey]
 		seckillconf.UserConnMapLock.Unlock()
 		if !ok {
-			conn.Close()
 			logs.Warn("user not found: %v",userkey)
-			continue
+			return
 		}
 
 		resultChan <- &result
-		conn.Close()
+		return
+	}
+	for {
+		f()
 	}
 }
 
