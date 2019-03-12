@@ -13,7 +13,7 @@ func main() {
 		return
 	}
 
-	err = config.InitConfig()
+	err = config.InitSecKill()
 	if err != nil {
 		panic(err)
 		return
