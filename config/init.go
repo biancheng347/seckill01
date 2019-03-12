@@ -9,30 +9,29 @@ import (
 
 var (
 	secKillConf = models.NewSecKillConf()
-	appconfg = beego.AppConfig
+	appconfg    = beego.AppConfig
 )
 
-func appConfigString(key string)(str string, err error) {
+func appConfigString(key string) (str string, err error) {
 	str = appconfg.String(key)
 	if len(str) == 0 {
-		err = fmt.Errorf("app config string failed,key: %v",key)
+		err = fmt.Errorf("app config string failed,key: %v", key)
 		return
 	}
 	return
 }
 
-func appConfigInt(key string)(i int,err error) {
-	i,err = appconfg.Int(key)
+func appConfigInt(key string) (i int, err error) {
+	i, err = appconfg.Int(key)
 	if err != nil {
-		err = fmt.Errorf("app config int failed,key: %v",key)
+		err = fmt.Errorf("app config int failed,key: %v", key)
 		return
 	}
 	return
 }
 
-
-func appConfigIntValue(num *int,key string) (err error) {
-	i,err  := appConfigInt(key)
+func appConfigIntValue(num *int, key string) (err error) {
+	i, err := appConfigInt(key)
 	if err != nil {
 		return
 	}
@@ -40,8 +39,8 @@ func appConfigIntValue(num *int,key string) (err error) {
 	return
 }
 
-func appConfigStringValue(str *string,key string) (err error) {
-	s,err := appConfigString(key)
+func appConfigStringValue(str *string, key string) (err error) {
+	s, err := appConfigString(key)
 	if err != nil {
 		return
 	}
@@ -49,26 +48,22 @@ func appConfigStringValue(str *string,key string) (err error) {
 	return
 }
 
-func initRedisConfig(redisConf *models.RedisConf,keys ...string) (err error) {
-	for _,v := range keys {
-		if strings.HasSuffix(v,"addr") {
-			err = appConfigStringValue(&redisConf.RedisAddr,v)
-			if err != nil {
+func initRedisConfig(redisConf *models.RedisConf, keys ...string) (err error) {
+	for _, v := range keys {
+		if strings.HasSuffix(v, "addr") {
+			if err = appConfigStringValue(&redisConf.RedisAddr, v); err != nil {
 				break
 			}
-		}else if strings.HasSuffix(v,"idle") {
-			err = appConfigIntValue(&redisConf.RedisMaxIdle,v)
-			if err != nil {
+		} else if strings.HasSuffix(v, "idle") {
+			if err = appConfigIntValue(&redisConf.RedisMaxIdle, v); err != nil {
 				break
 			}
-		}else if strings.HasSuffix(v,"active") {
-			err = appConfigIntValue(&redisConf.RedisMaxActive,v)
-			if err != nil {
+		} else if strings.HasSuffix(v, "active") {
+			if err = appConfigIntValue(&redisConf.RedisMaxActive, v); err != nil {
 				break
 			}
-		}else if strings.HasSuffix(v,"timeout") {
-			err = appConfigIntValue(&redisConf.RedisIdleTimeout,v)
-			if err != nil {
+		} else if strings.HasSuffix(v, "timeout") {
+			if err = appConfigIntValue(&redisConf.RedisIdleTimeout, v); err != nil {
 				break
 			}
 		}
@@ -77,88 +72,75 @@ func initRedisConfig(redisConf *models.RedisConf,keys ...string) (err error) {
 }
 
 func initRedisBlackConfig() (err error) {
-	err = initRedisConfig(&secKillConf.RedisBlackConf,
+	if err = initRedisConfig(&secKillConf.RedisBlackConf,
 		"redis_black_addr",
 		"redis_black_idle",
 		"redis_black_active",
-		"redis_black_idle_timeout")
-	if err != nil {
+		"redis_black_idle_timeout"); err != nil {
 		return
 	}
 	return
 }
 
-
-
 func initRedisLayerToProxyConfig() (err error) {
-	err = initRedisConfig(&secKillConf.RedisLayerToProxyConf,
+	if err = initRedisConfig(&secKillConf.RedisLayerToProxyConf,
 		"redis_layerToProxy_addr",
 		"redis_layerToProxy_idle",
 		"redis_layerToProxy_active",
-		"redis_layerToProxy_idle_timeout")
-	if err != nil {
+		"redis_layerToProxy_idle_timeout"); err != nil {
 		return
 	}
 
-	err = appConfigIntValue(&secKillConf.WriteLayerToProxyGoroutineNum,"write_layerToProxy_goroutine_num")
-	if err != nil {
+	if err = appConfigIntValue(&secKillConf.WriteLayerToProxyGoroutineNum, "write_layerToProxy_goroutine_num"); err != nil {
 		return
 	}
 
-	err = appConfigIntValue(&secKillConf.ReadLayerToProxyGoroutineNum,"read_layerToProxy_goroutine_num")
-	if err != nil {
+	if err = appConfigIntValue(&secKillConf.ReadLayerToProxyGoroutineNum, "read_layerToProxy_goroutine_num"); err != nil {
 		return
 	}
-
 	return
 }
 
-
-
 func initRedisProxyToLayerConfig() (err error) {
-	err = initRedisConfig(&secKillConf.RedisProxyToLayerConf,
+	if err = initRedisConfig(&secKillConf.RedisProxyToLayerConf,
 		"redis_proxyToLayer_addr",
 		"redis_proxyToLayer_idle",
 		"redis_proxyToLayer_active",
-		"redis_proxyToLayer_idle_timeout")
-	if err != nil {
+		"redis_proxyToLayer_idle_timeout"); err != nil {
 		return
 	}
 
-	err = appConfigIntValue(&secKillConf.WriteProxyToLayerGoroutineNum,"write_proxyToLayer_goroutine_num")
-	if err != nil {
+	if err = appConfigIntValue(&secKillConf.WriteProxyToLayerGoroutineNum, "write_proxyToLayer_goroutine_num"); err != nil {
 		return
 	}
 
-	err = appConfigIntValue(&secKillConf.ReadProxyToLayerGoroutineNum,"read_proxyToLayer_goroutine_num")
-	if err != nil {
+	if err = appConfigIntValue(&secKillConf.ReadProxyToLayerGoroutineNum, "read_proxyToLayer_goroutine_num"); err != nil {
 		return
 	}
-
 	return
 }
 
 func initLogConfig() (err error) {
-	err = appConfigStringValue(&secKillConf.LogPath,"log_path")
-	if err != nil {
+	if err = appConfigStringValue(&secKillConf.LogPath, "log_path"); err != nil {
 		return
 	}
 
-	err = appConfigStringValue(&secKillConf.LogLevel,"log_level")
-	if err != nil {
+	if err = appConfigStringValue(&secKillConf.LogLevel, "log_level"); err != nil {
 		return
 	}
 
-	err = appConfigStringValue(&secKillConf.CookieSecretKey,"cookie_secretkey")
-	if err != nil {
+	if err = appConfigStringValue(&secKillConf.CookieSecretKey, "cookie_secretkey"); err != nil {
 		return
 	}
 	return
 }
 
-
-
 func initLimitConfig() (err error) {
+
+	if err = appConfigIntValue(&secKillConf.AccessLimitConf.IPSecAccessLimit, "ip_sec_access_limit"); err != nil {
+		return
+	}
+
 	ipSecAccessLimit, err := beego.AppConfig.Int("ip_sec_access_limit")
 	if err != nil {
 		err = fmt.Errorf("initLimitConfig ipSecAccessLimit failed,err:%v", err)
@@ -214,7 +196,6 @@ func InitConfig() (err error) {
 	//if err != nil {
 	//	return
 	//}
-
 
 	//配置日志文件相关
 	err = initLogConfig()
