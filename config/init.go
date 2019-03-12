@@ -214,6 +214,7 @@ func InitConfig() (err error) {
 	//	return
 	//}
 
+
 	//配置日志文件相关
 	err = initLogConfig()
 	if err != nil {
