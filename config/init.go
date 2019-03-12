@@ -4,112 +4,112 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"seckill01/models"
+	"strings"
 )
 
 var (
 	secKillConf = models.NewSecKillConf()
+	appconfg = beego.AppConfig
 )
 
-func initRedisBlackConfig() (err error) {
-	redisBlackAddr := beego.AppConfig.String("redis_black_addr")
-	if len(redisBlackAddr) == 0 {
-		err = fmt.Errorf("initRedisBlackConfig redisBlackAddr failed,err")
+func appConfigString(key string)(str string, err error) {
+	str = appconfg.String(key)
+	if len(str) == 0 {
+		err = fmt.Errorf("app config string failed,key: %v",key)
 		return
 	}
-	secKillConf.RedisBlackConf.RedisAddr = redisBlackAddr
-
-	redisBlackIdle, err := beego.AppConfig.Int("redis_black_idle")
-	if err != nil {
-		err = fmt.Errorf("initRedisBlackConfig redisBlackIdle failed,err:%v", err)
-		return
-	}
-	secKillConf.RedisBlackConf.RedisMaxIdle = redisBlackIdle
-
-	redisBlackActvie, err := beego.AppConfig.Int("redis_black_active")
-	if err != nil {
-		err = fmt.Errorf("initRedisBlackConfig redisBlackActvie failed,err:%v", err)
-		return
-	}
-	secKillConf.RedisBlackConf.RedisMaxActive = redisBlackActvie
-
-	redisBlackIdleTimeout, err := beego.AppConfig.Int("redis_black_idle_timeout")
-	if err != nil {
-		err = fmt.Errorf("initRedisBlackConfig redisBlackIdleTimeout failed,err:%v", err)
-		return
-	}
-	secKillConf.RedisBlackConf.RedisIdleTimeout = redisBlackIdleTimeout
-
 	return
 }
+
+func appConfigInt(key string)(i int,err error) {
+	i,err = appconfg.Int(key)
+	if err != nil {
+		err = fmt.Errorf("app config int failed,key: %v",key)
+		return
+	}
+	return
+}
+
+
+
+func initRedisConfig(redisConf *models.RedisConf,keys ...string) (err error) {
+	for _,v := range keys {
+		if strings.HasSuffix(v,"addr") {
+			str,err := appConfigString(v)
+			if err != nil {
+				break
+			}
+			redisConf.RedisAddr= str
+		}else if strings.HasSuffix(v,"idle") {
+			i,err  := appConfigInt(v)
+			if err != nil {
+				break
+			}
+			redisConf.RedisMaxIdle = i
+		}else if strings.HasSuffix(v,"active") {
+			i,err  := appConfigInt(v)
+			if err != nil {
+				break
+			}
+			redisConf.RedisMaxActive = i
+		}else if strings.HasSuffix(v,"timeout") {
+			i,err  := appConfigInt(v)
+			if err != nil {
+				break
+			}
+			redisConf.RedisIdleTimeout = i
+		}
+	}
+	return
+}
+
+func initRedisBlackConfig() (err error) {
+	err = initRedisConfig(&secKillConf.RedisBlackConf,
+		"redis_black_addr",
+		"redis_black_idle",
+		"redis_black_active",
+		"redis_black_idle_timeout")
+	if err != nil {
+		return
+	}
+	return
+}
+
+
+
+
+
+
+
+
+
 
 func initRedisLayerToProxyConfig() (err error) {
-	redisLayerToProxyAddr := beego.AppConfig.String("redis_layerToProxy_addr")
-	if len(redisLayerToProxyAddr) == 0 {
-		err = fmt.Errorf("initRedisLayerToProxyConfig redisLayerToProxyAddr failed,err")
+	err = initRedisConfig(&secKillConf.RedisProxyToLayerConf,
+		"redis_layerToProxy_addr",
+		"redis_layerToProxy_idle",
+		"redis_layerToProxy_active",
+		"redis_layerToProxy_idle_timeout")
+	if err != nil {
 		return
 	}
 
-	redisLayerToProxyIdle, err := beego.AppConfig.Int("redis_layerToProxy_idle")
+	i,err  := appConfigInt("write_layerToProxy_goroutine_num")
 	if err != nil {
-		err = fmt.Errorf("initRedisLayerToProxyConfig redisLayerToProxyIdle failed,err:%v", err)
 		return
 	}
-	secKillConf.RedisLayerToProxyConf.RedisIdleTimeout = redisLayerToProxyIdle
+	secKillConf.WriteLayerToProxyGoroutineNum = i
 
-	redisLayerToProxyActvie, err := beego.AppConfig.Int("redis_layerToProxy_active")
+	i,err  = appConfigInt("read_layerToProxy_goroutine_num")
 	if err != nil {
-		err = fmt.Errorf("initRedisLayerToProxyConfig redisLayerToProxyActvie failed,err:%v", err)
 		return
 	}
-	secKillConf.RedisLayerToProxyConf.RedisMaxActive = redisLayerToProxyActvie
+	secKillConf.ReadLayerToProxyGoroutineNum = i
 
-	redisLayerToProxyIdleTimeout, err := beego.AppConfig.Int("redis_layerToProxy_idle_timeout")
-	if err != nil {
-		err = fmt.Errorf("initRedisLayerToProxyConfig redisLayerToProxyIdleTimeout failed,err:%v", err)
-		return
-	}
-	secKillConf.RedisLayerToProxyConf.RedisIdleTimeout = redisLayerToProxyIdleTimeout
-
-	writeLayerToProxyGoroutineNum, err := beego.AppConfig.Int("write_layerToProxy_goroutine_num")
-	if err != nil {
-		err = fmt.Errorf("initRedisLayerToProxyConfig writeLayerToProxyGoroutineNum failed,err:%v", err)
-		return
-	}
-	secKillConf.WriteLayerToProxyGoroutineNum = writeLayerToProxyGoroutineNum
-
-	readLayerToProxyGoroutineNum, err := beego.AppConfig.Int("read_layerToProxy_goroutine_num")
-	if err != nil {
-		err = fmt.Errorf("initRedisLayerToProxyConfig readLayerToProxyGoroutineNum failed,err:%v", err)
-		return
-	}
-	secKillConf.ReadLayerToProxyGoroutineNum = readLayerToProxyGoroutineNum
 	return
 }
 
-func initLogConfig() (err error) {
-	logPath := beego.AppConfig.String("log_path")
-	if len(logPath) == 0 {
-		err = fmt.Errorf("initLogConfig logPath failed,err")
-		return
-	}
-	secKillConf.LogPath = logPath
 
-	logLevel := beego.AppConfig.String("log_level")
-	if len(logLevel) == 0 {
-		err = fmt.Errorf("initLogConfig logLevel failed,err")
-		return
-	}
-	secKillConf.LogLevel = logLevel
-
-	cookieSecretKey := beego.AppConfig.String("cookie_secretkey")
-	if len(cookieSecretKey) == 0 {
-		err = fmt.Errorf("initLogConfig cookieSecretKey failed,err")
-		return
-	}
-	secKillConf.CookieSecretKey = cookieSecretKey
-
-	return
-}
 
 func initRedisProxyToLayerConfig() (err error) {
 	redisProxyToLayerAddr := beego.AppConfig.String("redis_proxyToLayer_addr")
@@ -156,6 +156,33 @@ func initRedisProxyToLayerConfig() (err error) {
 
 	return
 }
+
+func initLogConfig() (err error) {
+	logPath := beego.AppConfig.String("log_path")
+	if len(logPath) == 0 {
+		err = fmt.Errorf("initLogConfig logPath failed,err")
+		return
+	}
+	secKillConf.LogPath = logPath
+
+	logLevel := beego.AppConfig.String("log_level")
+	if len(logLevel) == 0 {
+		err = fmt.Errorf("initLogConfig logLevel failed,err")
+		return
+	}
+	secKillConf.LogLevel = logLevel
+
+	cookieSecretKey := beego.AppConfig.String("cookie_secretkey")
+	if len(cookieSecretKey) == 0 {
+		err = fmt.Errorf("initLogConfig cookieSecretKey failed,err")
+		return
+	}
+	secKillConf.CookieSecretKey = cookieSecretKey
+
+	return
+}
+
+
 
 func initLimitConfig() (err error) {
 	ipSecAccessLimit, err := beego.AppConfig.Int("ip_sec_access_limit")
