@@ -34,56 +34,64 @@ func initRedis(conf RedisConf) (redisPool  *redis.Pool,err error) {
 	return
 }
 
-func loadBlackList() (err error) {
-	pool,err := initRedis(seckillconf.RedisBlackConf)
+func connDo(conn redis.Conn,name,args string,f func(list []string)) (err error) {
+	relply,err := conn.Do(name,args)
+	list,err := redis.Strings(relply,err)
 	if err != nil {
-		logs.Error("init black redis failed,err: %v",err)
+		logs.Warn("name: %v , args: %v  failed,err:%v",name,args,err)
 		return
 	}
-	seckillconf.BlackRedisPool = pool
+	f(list)
+	return
+}
 
+func loadBlackList() (err error) {
+	if err = initRedisValue(seckillconf.BlackRedisPool,seckillconf.RedisBlackConf);err != nil {
+		return
+	}
 	conn := seckillconf.BlackRedisPool.Get()
 	defer  conn.Close()
 
-	relply,err := conn.Do("hgetall","idblacklist")
-	idlist,err := redis.Strings(relply,err)
-	if err != nil {
-		logs.Warn("hget all failed,err:%v",err)
-		return
-	}
-
-	for _,v := range idlist {
-		id,err := strconv.Atoi(v)
-		if err != nil {
-			logs.Warn("invalid user id: %v",id)
-			continue
+	err = connDo(conn,"hgetall","idblacklist", func(list []string) {
+		for _,v := range list {
+			id,err := strconv.Atoi(v)
+			if err != nil {
+				logs.Warn("invalid user id: %v",id)
+				continue
+			}
+			seckillconf.idBlackMap[id] = true
 		}
-		seckillconf.idBlackMap[id] = true
-	}
-
-	relply ,err = conn.Do("hgetall","ipblacklist")
-	iplist,err := redis.Strings(relply,err)
+	})
 	if err != nil {
-		logs.Warn("hget all failed,err:%v",err)
 		return
 	}
 
-	for _,v := range iplist {
-		seckillconf.ipBlackMap[v] = true
+	err = connDo(conn,"hgetall","ipblacklist", func(list []string) {
+		for _,v := range list {
+			seckillconf.ipBlackMap[v] = true
+		}
+	})
+	if err != nil {
+		return
 	}
 	return
 }
 
-
+func initRedisValue(redisPool *redis.Pool,conf RedisConf) (err error) {
+	pool,err := initRedis(conf)
+	if err != nil {
+		logs.Error("init redis failed,err: %v,addr: %v",err,conf.RedisAddr)
+		return
+	}
+	redisPool = pool
+	return
+}
 
 
 func initProxyToLayerRedis() (err error) {
-	pool,err := initRedis(seckillconf.RedisProxyToLayerConf)
-	if err != nil {
-		logs.Error("init black redis failed,err: %v",err)
+	if err = initRedisValue(seckillconf.ProxyToLayerRedisPool,seckillconf.RedisProxyToLayerConf);err != nil {
 		return
 	}
-	seckillconf.ProxyToLayerRedisPool = pool
 	return
 }
 
