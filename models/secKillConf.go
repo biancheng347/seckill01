@@ -54,6 +54,10 @@ type SecKillConf struct {
 	LogLevel string
 
 	CookieSecretKey string
+	SecReqChan     chan *SecRequest
+	SecReqChanSize int
+	UserConnMap     map[string]chan *SecResult
+
 }
 
 func NewSecKillConf() *SecKillConf {

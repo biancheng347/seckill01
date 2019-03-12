@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego/logs"
+	"seckill01/models"
 )
 
 func convertLogLevel(level string) int {
@@ -55,7 +56,7 @@ func InitSecKill() (err error) {
 		return
 	}
 
-	//models.InitServer(secKillConf)
+	models.InitServer(secKillConf)
 	//initSecProcutWatcher()
 	return
 }

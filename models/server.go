@@ -75,14 +75,59 @@ func loadBlackList() (err error) {
 	return
 }
 
+
+
+
+func initProxyToLayerRedis() (err error) {
+	pool,err := initRedis(seckillconf.RedisProxyToLayerConf)
+	if err != nil {
+		logs.Error("init black redis failed,err: %v",err)
+		return
+	}
+	seckillconf.ProxyToLayerRedisPool = pool
+	return
+}
+
+func WriteHandle() {
+
+}
+
+func ReadHandle() {
+
+}
+
+func initRedisProcessFunc() {
+	for i := 0; i < seckillconf.WriteProxyToLayerGoroutineNum; i++ {
+		go WriteHandle()
+	}
+
+	for i := 0; i < seckillconf.ReadProxyToLayerGoroutineNum; i++ {
+		go ReadHandle()
+	}
+}
+
 func InitServer(secKillConfig *SecKillConf) (err error) {
 	seckillconf = secKillConfig
 
-	err = loadBlackList()
-	if err != nil {
+	if err = loadBlackList();err != nil {
 		logs.Error("load black list err: %v",err)
 		return
 	}
 	logs.Debug("init service success,config: %v",seckillconf)
+
+	if err = initProxyToLayerRedis();err != nil {
+		logs.Error("load proxy2layer redis pool failed, err:%v", err)
+		return
+	}
+
+	seckillconf.secLimitMgr = &SecLimitMgr{
+		UserLimitMap:make(map[int]*Limit,10000),
+		IpLimitMap:make(map[string]*Limit,10000),
+	}
+	seckillconf.SecReqChan = make(chan *SecRequest,seckillconf.SecReqChanSize)
+	seckillconf.UserConnMap = make(map[string]chan *SecResult,10000)
+
+	initRedisProcessFunc()
+
 	return
 }
