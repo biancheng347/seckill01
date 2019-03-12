@@ -40,34 +40,34 @@ type SecKillConf struct {
 	RedisBlackConf        RedisConf
 	RedisLayerToProxyConf RedisConf
 	RedisProxyToLayerConf RedisConf
-	EtcdConf EtcdConf
-	LogPath  string
-	LogLevel string
 
 	BlackRedisPool        *redis.Pool
 	ProxyToLayerRedisPool *redis.Pool
 	LayerToProxyRedisPool *redis.Pool
 
-	RWSecProductLock  sync.RWMutex
-	secProductInfoMap map[int]*SecProductInfoConf
-	CookieSecretKey string
-	ReferWhiteList []string
-
-	idBlackMap        map[int]bool
-	ipBlackMap        map[string]bool
-
-	AccessLimitConf   AccessLimitConf
-	secLimitMgr       *SecLimitMgr
-
 	WriteLayerToProxyGoroutineNum int
 	ReadLayerToProxyGoroutineNum  int
-
 	WriteProxyToLayerGoroutineNum int
 	ReadProxyToLayerGoroutineNum  int
+
+	idBlackMap        map[int]bool //
+	ipBlackMap        map[string]bool //
+
+	LogPath  string
+	LogLevel string
+
+	RWSecProductLock  sync.RWMutex
+	secProductInfoMap map[int]*SecProductInfoConf //
+
 	SecReqChan     chan *SecRequest
 	SecReqChanSize int
-	UserConnMap     map[string]chan *SecResult
 
+	EtcdConf EtcdConf
+	CookieSecretKey string
+	ReferWhiteList []string
+	AccessLimitConf   AccessLimitConf
+	secLimitMgr       *SecLimitMgr //
+	UserConnMap     map[string]chan *SecResult //
 }
 
 func NewSecKillConf() *SecKillConf {
@@ -79,7 +79,7 @@ func NewSecKillConf() *SecKillConf {
 			UserLimitMap:make(map[int]*Limit,10000),
 			IpLimitMap:make(map[string]*Limit,10000),
 		},
-		//SecReqChan: make(chan *SecRequest,seckillconf.SecReqChanSize),
+		SecReqChan: make(chan *SecRequest,10000),
 		UserConnMap: make(map[string]chan *SecResult,10000),
 	}
 }
