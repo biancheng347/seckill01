@@ -7,10 +7,10 @@ var (
 )
 
 type RedisConf struct {
-	RedisAddr      string
-	RedisMaxIdle   int
-	RedisMaxActive int
-	RedisIdleTime  int
+	RedisAddr        string
+	RedisMaxIdle     int
+	RedisMaxActive   int
+	RedisIdleTimeout int
 }
 
 type SecProductInfoConf struct {
@@ -30,7 +30,9 @@ type AccessLimitConf struct {
 }
 
 type SecKillConf struct {
-	RedisBlackConf RedisConf
+	RedisBlackConf        RedisConf
+	RedisLayerToProxyConf RedisConf
+	RedisProxyToLayerConf RedisConf
 
 	RWSecProductLock  sync.RWMutex
 	secProductInfoMap map[int]*SecProductInfoConf
@@ -38,8 +40,21 @@ type SecKillConf struct {
 	ipBlackMap        map[string]bool
 	secLimitMgr       *SecLimitMgr
 	AccessLimitConf   AccessLimitConf
+
+	WriteLayerToProxyGoroutineNum int
+	ReadLayerToProxyGoroutineNum int
+
+	WriteProxyToLayerGoroutineNum int
+	ReadProxyToLayerGoroutineNum int
+
+	LogPath string
+	LogLevel string
+
+	CookieSecretKey string
 }
 
 func NewSecKillConf() *SecKillConf {
-	return &SecKillConf{}
+	return &SecKillConf{
+		secProductInfoMap: make(map[int]*SecProductInfoConf,1024),
+	}
 }

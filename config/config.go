@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"fmt"
@@ -189,7 +189,7 @@ func initLimitConfig() (err error) {
 	return
 }
 
-func initConfig() (err error) {
+func InitConfig() (err error) {
 	//配置黑名单Redis
 	err = initRedisBlackConfig()
 	if err != nil {
