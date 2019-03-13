@@ -57,7 +57,7 @@ type SecKillConf struct {
 	LogLevel string
 
 	RWSecProductLock  sync.RWMutex
-	secProductInfoMap map[int]*SecProductInfoConf //
+	SecProductInfoMap map[int]*SecProductInfoConf //
 
 	SecReqChan     chan *SecRequest//
 	SecReqChanSize int
@@ -75,7 +75,7 @@ type SecKillConf struct {
 
 func NewSecKillConf() *SecKillConf {
 	return &SecKillConf{
-		secProductInfoMap: make(map[int]*SecProductInfoConf, 1024),
+		SecProductInfoMap: make(map[int]*SecProductInfoConf, 1024),
 		idBlackMap: make(map[int]bool,10000),
 		ipBlackMap: make(map[string]bool,10000),
 		secLimitMgr: &SecLimitMgr{
