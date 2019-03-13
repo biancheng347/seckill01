@@ -59,10 +59,7 @@ func initRedisProxyToLayerConfig() (err error) {
 }
 
 func initLogConfig() (err error) {
-	if err = structModel.AppConfigStringValue(&secKillConf.LogPath, "log_path"); err != nil {
-		return
-	}
-	if err = structModel.AppConfigStringValue(&secKillConf.LogLevel, "log_level"); err != nil {
+	if err = secKillConf.Logs.InitLogConfig(); err != nil {
 		return
 	}
 	if err = structModel.AppConfigStringValue(&secKillConf.CookieSecretKey, "cookie_secretkey"); err != nil {

@@ -84,8 +84,7 @@ type SecKillConf struct {
 	idBlackMap        map[int]bool //
 	ipBlackMap        map[string]bool //
 
-	LogPath  string
-	LogLevel string
+	Logs structModel.LogsConf
 
 	RWSecProductLock  sync.RWMutex
 	SecProductInfoMap map[int]*SecProductInfoConf //

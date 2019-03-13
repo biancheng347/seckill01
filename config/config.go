@@ -3,7 +3,6 @@ package config
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/astaxie/beego/logs"
 	"go.etcd.io/etcd/clientv3"
 	"go.etcd.io/etcd/mvcc/mvccpb"
@@ -15,32 +14,11 @@ var (
 	etcdClient *clientv3.Client
 )
 
-func convertLogLevel(level string) int {
-	switch level {
-	case "debug":
-		return logs.LevelDebug
-	case "warn":
-		return logs.LevelWarn
-	case "info":
-		return logs.LevelInfo
-	case "trace":
-		return logs.LevelTrace
-	}
-	return logs.LevelDebug
-}
 
 func initLogger() (err error) {
-	config := make(map[string]interface{})
-	config["filename"] = secKillConf.LogPath
-	config["level"] = convertLogLevel(secKillConf.LogLevel)
-
-	configByte, err := json.Marshal(config)
-	if err != nil {
-		err = fmt.Errorf("initLogger configByte failed,err:%v", err)
+	if err = secKillConf.Logs.InitLogger();err != nil {
 		return
 	}
-
-	logs.SetLogger(logs.AdapterFile, string(configByte))
 	return
 }
 
