@@ -174,8 +174,6 @@ func InitServer(sec *SecKillConf) (err error) {
 		logs.Error("load black list err: %v",err)
 		return
 	}
-	logs.Debug("init service success,config: %v",seckillconf)
-
 	if err = initProxyToLayerRedis();err != nil {
 		logs.Error("load proxy2layer redis pool failed, err:%v", err)
 		return

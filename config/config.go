@@ -143,5 +143,6 @@ func InitSecKill() (err error) {
 	}
 	models.InitServer(secKillConf)
 	initSecProcutWatcher()
+	logs.Debug("init server success")
 	return
 }
