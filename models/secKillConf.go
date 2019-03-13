@@ -28,9 +28,13 @@ type AccessLimitConf struct {
 	UserMinAccessLimit int
 }
 
-type EtcdConf struct{
+type EtcdConfParam struct{
 	EtcdAddr          string
 	Timeout           int
+}
+
+type EtcdConf struct{
+	EtcdConfParam
 	EtcdSecKeyPrefix  string
 	EtcdSecProductKey string
 }
