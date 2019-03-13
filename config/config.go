@@ -124,6 +124,7 @@ func watchSecProductKey(key string) {
 	}
 }
 
+
 func initSecProcutWatcher() {
 	go watchSecProductKey(secKillConf.EtcdConf.EtcdSecProductKey)
 }

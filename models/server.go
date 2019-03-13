@@ -46,7 +46,7 @@ func connDo(conn redis.Conn,name,args string,f func(list []string)) (err error) 
 }
 
 func loadBlackList() (err error) {
-	if err = initRedisValue(seckillconf.BlackRedisPool,seckillconf.RedisBlackConf);err != nil {
+	if err = initRedisValue(&seckillconf.BlackRedisPool,seckillconf.RedisBlackConf);err != nil {
 		return
 	}
 	conn := seckillconf.BlackRedisPool.Get()
@@ -77,19 +77,19 @@ func loadBlackList() (err error) {
 	return
 }
 
-func initRedisValue(redisPool *redis.Pool,conf RedisConf) (err error) {
+func initRedisValue(redisPool **redis.Pool,conf RedisConf) (err error) {
 	pool,err := initRedis(conf)
 	if err != nil {
 		logs.Error("init redis failed,err: %v,addr: %v",err,conf.RedisAddr)
 		return
 	}
-	redisPool = pool
+	*redisPool = pool
 	return
 }
 
 
 func initProxyToLayerRedis() (err error) {
-	if err = initRedisValue(seckillconf.ProxyToLayerRedisPool,seckillconf.RedisProxyToLayerConf);err != nil {
+	if err = initRedisValue(&seckillconf.ProxyToLayerRedisPool,seckillconf.RedisProxyToLayerConf);err != nil {
 		return
 	}
 	return
