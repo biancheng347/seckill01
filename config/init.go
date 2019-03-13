@@ -28,7 +28,6 @@ func initRedisLayerToProxyConfig() (err error) {
 		"redis_layerToProxy_idle_timeout"); err != nil {
 		return
 	}
-
 	if err = structModel.AppConfigIntValue(&secKillConf.WriteLayerToProxyGoroutineNum, "write_layerToProxy_goroutine_num"); err != nil {
 		return
 	}
@@ -40,14 +39,13 @@ func initRedisLayerToProxyConfig() (err error) {
 }
 
 func initRedisProxyToLayerConfig() (err error) {
-	if err = secKillConf.RedisLayerToProxyConf.InitRedisConf(
+	if err = secKillConf.RedisProxyToLayerConf.InitRedisConf(
 		"redis_proxyToLayer_addr",
 		"redis_proxyToLayer_idle",
 		"redis_proxyToLayer_active",
 		"redis_proxyToLayer_idle_timeout"); err != nil {
 		return
 	}
-
 	if err = structModel.AppConfigIntValue(&secKillConf.WriteProxyToLayerGoroutineNum, "write_proxyToLayer_goroutine_num"); err != nil {
 		return
 	}

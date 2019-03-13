@@ -30,13 +30,6 @@ func NewSecRequest() *SecRequest {
 	return &SecRequest{}
 }
 
-//type RedisConf struct {
-//	RedisAddr        string
-//	RedisMaxIdle     int
-//	RedisMaxActive   int
-//	RedisIdleTimeout int
-//}
-
 type SecProductInfoConf struct {
 	ProductId int
 	StartTime int64
@@ -45,25 +38,6 @@ type SecProductInfoConf struct {
 	Total     int
 	Remain    int
 }
-
-//type AccessLimitConf struct {
-//	IPSecAccessLimit   int
-//	UserSecAccessLimit int
-//	IPMinAccessLimit   int
-//	UserMinAccessLimit int
-//}
-
-//type EtcdConfParam struct{
-//	EtcdAddr          string
-//	Timeout           int
-//}
-//
-//type EtcdConf struct{
-//	EtcdConfParam
-//	EtcdSecKeyPrefix  string
-//	EtcdSecProductKey string
-//}
-
 
 type SecKillConf struct {
 	RedisBlackConf        structModel.RedisConf
