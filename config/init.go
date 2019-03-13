@@ -149,6 +149,35 @@ func initLimitConfig() (err error) {
 	return
 }
 
+
+func initEtcdConfigProductKey(str *string,key string) (err error) {
+	productKey := ""
+	if err = appConfigStringValue(&productKey,key);err != nil {
+		return
+	}
+	if strings.HasSuffix(secKillConf.EtcdConf.EtcdSecKeyPrefix, "/") == false {
+		secKillConf.EtcdConf.EtcdSecKeyPrefix = secKillConf.EtcdConf.EtcdSecKeyPrefix + "/"
+	}
+	*str = fmt.Sprintf("%s%s", secKillConf.EtcdConf.EtcdSecKeyPrefix, productKey)
+	return
+}
+
+func initEtcdConfig() (err error) {
+	if err = appConfigStringValue(&secKillConf.EtcdConf.EtcdAddr,"etcd_addr");err != nil {
+		return
+	}
+	if err = appConfigIntValue(&secKillConf.EtcdConf.Timeout,"etcd_timeout"); err != nil {
+		return
+	}
+	if err = appConfigStringValue(&secKillConf.EtcdConf.EtcdSecKeyPrefix,"etcd_sec_key_prefix");err != nil {
+		return
+	}
+	if err = initEtcdConfigProductKey(&secKillConf.EtcdConf.EtcdSecProductKey ,"etcd_product_key");err != nil {
+		return
+	}
+	return
+}
+
 func InitConfig() (err error) {
 	//配置黑名单Redis
 	if err = initRedisBlackConfig();err != nil {
@@ -165,11 +194,10 @@ func InitConfig() (err error) {
 		return
 	}
 
-	////配置etcd 参数
-	//err = initEtcdConfig()
-	//if err != nil {
-	//	return
-	//}
+	//配置etcd 参数
+	if err = initEtcdConfig();err != nil {
+		return
+	}
 
 	//配置日志文件相关
 	if err = initLogConfig();err != nil {
