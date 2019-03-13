@@ -2,10 +2,9 @@ package models
 
 import (
 	"fmt"
+	"github.com/astaxie/beego/logs"
 	"time"
 )
-
-
 
 func antiSpam(req *SecRequest) (err error) {
 
@@ -146,6 +145,35 @@ func (req *SecRequest) SecKill() (data map[string]interface{}, code int, err err
 		return
 	}
 
-	return
+	if code != 0 {
+		logs.Warn("userId: %d secInfByid failed, code[%d] req[%v]", req.UserId, code, req)
+		return
+	}
 
+	userKey := fmt.Sprintf("%s_%s", req.UserId, req.ProductId)
+	seckillconf.UserConnMap[userKey] = req.ResultChan
+	seckillconf.SecReqChan <- req
+
+	ticker := time.NewTicker(time.Second * 10)
+	defer func() {
+		ticker.Stop()
+		seckillconf.UserConnMapLock.Lock()
+		delete(seckillconf.UserConnMap, userKey)
+		seckillconf.UserConnMapLock.Unlock()
+	}()
+
+	select {
+	case <-ticker.C:
+		code = ErrProcessTimeout
+		err = fmt.Errorf("request timtout")
+	case <-req.CloseNotify:
+		code = ErrClientClosed
+		err = fmt.Errorf("client alread close")
+	case result := <-req.ResultChan:
+		code = result.Code
+		data["productId"] = result.ProductId
+		data["token"] = result.Token
+		data["user_id"] = result.UserId
+	}
+	return
 }

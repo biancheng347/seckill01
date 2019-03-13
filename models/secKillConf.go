@@ -24,6 +24,8 @@ type SecRequest struct {
 	UserAuthSign string
 	AccessTime   time.Time
 	ClientAddr   string
+	ResultChan chan *SecResult
+	CloseNotify <-chan bool
 }
 
 func NewSecRequest() *SecRequest {
