@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/garyburd/redigo/redis"
+	"seckill01/structModel"
 	"strconv"
 	"time"
 )
@@ -13,26 +14,26 @@ var (
 	seckillconf *SecKillConf
 )
 
-func initRedis(conf RedisConf) (redisPool  *redis.Pool,err error) {
-	pool := &redis.Pool{
-		MaxIdle: conf.RedisMaxIdle,
-		MaxActive: conf.RedisMaxActive,
-		IdleTimeout: time.Duration(conf.RedisIdleTimeout) * time.Second,
-		Dial: func() (redis.Conn, error) {
-			return redis.Dial("tcp",conf.RedisAddr)
-		},
-	}
-	conn := pool.Get()
-	defer  conn.Close()
-
-	_,err = conn.Do("ping")
-	if err != nil {
-		logs.Error("ping redis failed,err :%v", err)
-		return
-	}
-	redisPool = pool
-	return
-}
+//func initRedis(conf RedisConf) (redisPool  *redis.Pool,err error) {
+//	pool := &redis.Pool{
+//		MaxIdle: conf.RedisMaxIdle,
+//		MaxActive: conf.RedisMaxActive,
+//		IdleTimeout: time.Duration(conf.RedisIdleTimeout) * time.Second,
+//		Dial: func() (redis.Conn, error) {
+//			return redis.Dial("tcp",conf.RedisAddr)
+//		},
+//	}
+//	conn := pool.Get()
+//	defer  conn.Close()
+//
+//	_,err = conn.Do("ping")
+//	if err != nil {
+//		logs.Error("ping redis failed,err :%v", err)
+//		return
+//	}
+//	redisPool = pool
+//	return
+//}
 
 func connDo(conn redis.Conn,name,args string,f func(list []string)) (err error) {
 	relply,err := conn.Do(name,args)
@@ -77,13 +78,10 @@ func loadBlackList() (err error) {
 	return
 }
 
-func initRedisValue(redisPool **redis.Pool,conf RedisConf) (err error) {
-	pool,err := initRedis(conf)
-	if err != nil {
-		logs.Error("init redis failed,err: %v,addr: %v",err,conf.RedisAddr)
+func initRedisValue(redisPool **redis.Pool,conf structModel.RedisConf) (err error) {
+	if err = conf.InitRedisValue(redisPool);err != nil {
 		return
 	}
-	*redisPool = pool
 	return
 }
 

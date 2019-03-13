@@ -75,20 +75,9 @@ func loadSecConfig() (err error) {
 	return
 }
 
-func initEtcdConf(conf models.EtcdConfParam) (cli *clientv3.Client, err error) {
-	cli, err = clientv3.New(clientv3.Config{
-		Endpoints:   []string{conf.EtcdAddr},
-		DialTimeout: time.Duration(conf.Timeout) * time.Second,
-	})
-	if err != nil {
-		logs.Error("connct etcd failed,err:", err)
-		return
-	}
-	return
-}
 
 func initEtcd() (err error) {
-	etcdClient, err = initEtcdConf(secKillConf.EtcdConf.EtcdConfParam)
+	etcdClient, err = secKillConf.EtcdConf.EtcdConfParam.InitEtcdConf()
 	if err != nil {
 		return
 	}

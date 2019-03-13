@@ -1,79 +1,17 @@
 package config
 
 import (
-	"fmt"
-	"github.com/astaxie/beego"
 	"seckill01/models"
-	"strings"
+	"seckill01/structModel"
 )
 
 var (
 	secKillConf = models.NewSecKillConf()
-	appconfg    = beego.AppConfig
 )
 
-func appConfigString(key string) (str string, err error) {
-	str = appconfg.String(key)
-	if len(str) == 0 {
-		err = fmt.Errorf("app config string failed,key: %v", key)
-		return
-	}
-	return
-}
-
-func appConfigInt(key string) (i int, err error) {
-	i, err = appconfg.Int(key)
-	if err != nil {
-		err = fmt.Errorf("app config int failed,key: %v", key)
-		return
-	}
-	return
-}
-
-func appConfigIntValue(num *int, key string) (err error) {
-	i, err := appConfigInt(key)
-	if err != nil {
-		return
-	}
-	*num = i
-	return
-}
-
-func appConfigStringValue(str *string, key string) (err error) {
-	s, err := appConfigString(key)
-	if err != nil {
-		return
-	}
-	*str = s
-	return
-}
-
-func initRedisConfig(redisConf *models.RedisConf, keys ...string) (err error) {
-	for _, v := range keys {
-		if strings.HasSuffix(v, "addr") {
-			if err = appConfigStringValue(&redisConf.RedisAddr, v); err != nil {
-				break
-			}
-		} else if strings.HasSuffix(v, "idle") {
-			if err = appConfigIntValue(&redisConf.RedisMaxIdle, v); err != nil {
-				break
-			}
-		} else if strings.HasSuffix(v, "active") {
-			if err = appConfigIntValue(&redisConf.RedisMaxActive, v); err != nil {
-				break
-			}
-		} else if strings.HasSuffix(v, "timeout") {
-			if err = appConfigIntValue(&redisConf.RedisIdleTimeout, v); err != nil {
-				break
-			}
-		}
-	}
-	return
-}
 
 func initRedisBlackConfig() (err error) {
-	if err = initRedisConfig(&secKillConf.RedisBlackConf,
-		"redis_black_addr",
+	if err = secKillConf.RedisBlackConf.InitRedisConf("redis_black_addr",
 		"redis_black_idle",
 		"redis_black_active",
 		"redis_black_idle_timeout"); err != nil {
@@ -83,7 +21,7 @@ func initRedisBlackConfig() (err error) {
 }
 
 func initRedisLayerToProxyConfig() (err error) {
-	if err = initRedisConfig(&secKillConf.RedisLayerToProxyConf,
+	if err = secKillConf.RedisLayerToProxyConf.InitRedisConf(
 		"redis_layerToProxy_addr",
 		"redis_layerToProxy_idle",
 		"redis_layerToProxy_active",
@@ -91,18 +29,18 @@ func initRedisLayerToProxyConfig() (err error) {
 		return
 	}
 
-	if err = appConfigIntValue(&secKillConf.WriteLayerToProxyGoroutineNum, "write_layerToProxy_goroutine_num"); err != nil {
+	if err = structModel.AppConfigIntValue(&secKillConf.WriteLayerToProxyGoroutineNum, "write_layerToProxy_goroutine_num"); err != nil {
 		return
 	}
 
-	if err = appConfigIntValue(&secKillConf.ReadLayerToProxyGoroutineNum, "read_layerToProxy_goroutine_num"); err != nil {
+	if err = structModel.AppConfigIntValue(&secKillConf.ReadLayerToProxyGoroutineNum, "read_layerToProxy_goroutine_num"); err != nil {
 		return
 	}
 	return
 }
 
 func initRedisProxyToLayerConfig() (err error) {
-	if err = initRedisConfig(&secKillConf.RedisProxyToLayerConf,
+	if err = secKillConf.RedisLayerToProxyConf.InitRedisConf(
 		"redis_proxyToLayer_addr",
 		"redis_proxyToLayer_idle",
 		"redis_proxyToLayer_active",
@@ -110,69 +48,42 @@ func initRedisProxyToLayerConfig() (err error) {
 		return
 	}
 
-	if err = appConfigIntValue(&secKillConf.WriteProxyToLayerGoroutineNum, "write_proxyToLayer_goroutine_num"); err != nil {
+	if err = structModel.AppConfigIntValue(&secKillConf.WriteProxyToLayerGoroutineNum, "write_proxyToLayer_goroutine_num"); err != nil {
 		return
 	}
 
-	if err = appConfigIntValue(&secKillConf.ReadProxyToLayerGoroutineNum, "read_proxyToLayer_goroutine_num"); err != nil {
+	if err = structModel.AppConfigIntValue(&secKillConf.ReadProxyToLayerGoroutineNum, "read_proxyToLayer_goroutine_num"); err != nil {
 		return
 	}
 	return
 }
 
 func initLogConfig() (err error) {
-	if err = appConfigStringValue(&secKillConf.LogPath, "log_path"); err != nil {
+	if err = structModel.AppConfigStringValue(&secKillConf.LogPath, "log_path"); err != nil {
 		return
 	}
-	if err = appConfigStringValue(&secKillConf.LogLevel, "log_level"); err != nil {
+	if err = structModel.AppConfigStringValue(&secKillConf.LogLevel, "log_level"); err != nil {
 		return
 	}
-	if err = appConfigStringValue(&secKillConf.CookieSecretKey, "cookie_secretkey"); err != nil {
+	if err = structModel.AppConfigStringValue(&secKillConf.CookieSecretKey, "cookie_secretkey"); err != nil {
 		return
 	}
 	return
 }
 
 func initLimitConfig() (err error) {
-	if err = appConfigIntValue(&secKillConf.AccessLimitConf.IPSecAccessLimit, "ip_sec_access_limit"); err != nil {
+	if err = secKillConf.AccessLimitConf.InitAccessLimitConf(); err != nil {
 		return
 	}
-	if err = appConfigIntValue(&secKillConf.AccessLimitConf.UserSecAccessLimit, "user_sec_access_limit"); err != nil {
-		return
-	}
-	if err = appConfigIntValue(&secKillConf.AccessLimitConf.IPMinAccessLimit, "ip_min_access_limit"); err != nil {
-		return
-	}
-	if err = appConfigIntValue(&secKillConf.AccessLimitConf.UserMinAccessLimit, "user_min_access_limit"); err != nil {
-		return
-	}
-	return
-}
-
-
-func initEtcdConfigProductKey(str *string,key string) (err error) {
-	productKey := ""
-	if err = appConfigStringValue(&productKey,key);err != nil {
-		return
-	}
-	if strings.HasSuffix(secKillConf.EtcdConf.EtcdSecKeyPrefix, "/") == false {
-		secKillConf.EtcdConf.EtcdSecKeyPrefix = secKillConf.EtcdConf.EtcdSecKeyPrefix + "/"
-	}
-	*str = fmt.Sprintf("%s%s", secKillConf.EtcdConf.EtcdSecKeyPrefix, productKey)
 	return
 }
 
 func initEtcdConfig() (err error) {
-	if err = appConfigStringValue(&secKillConf.EtcdConf.EtcdAddr,"etcd_addr");err != nil {
-		return
-	}
-	if err = appConfigIntValue(&secKillConf.EtcdConf.Timeout,"etcd_timeout"); err != nil {
-		return
-	}
-	if err = appConfigStringValue(&secKillConf.EtcdConf.EtcdSecKeyPrefix,"etcd_sec_key_prefix");err != nil {
-		return
-	}
-	if err = initEtcdConfigProductKey(&secKillConf.EtcdConf.EtcdSecProductKey ,"etcd_product_key");err != nil {
+	if err = secKillConf.EtcdConf.InitEtcdConf(
+		"etcd_addr",
+		"etcd_timeout",
+		"etcd_sec_key_prefix",
+		"etcd_product_key"); err != nil {
 		return
 	}
 	return
@@ -180,32 +91,32 @@ func initEtcdConfig() (err error) {
 
 func InitConfig() (err error) {
 	//配置黑名单Redis
-	if err = initRedisBlackConfig();err != nil {
+	if err = initRedisBlackConfig(); err != nil {
 		return
 	}
 
 	//配置接入层->业务逻辑层
-	if err = initRedisProxyToLayerConfig();err != nil {
+	if err = initRedisProxyToLayerConfig(); err != nil {
 		return
 	}
 
 	//配置业务逻辑层->接入层
-	if err = initRedisLayerToProxyConfig();err != nil {
+	if err = initRedisLayerToProxyConfig(); err != nil {
 		return
 	}
 
 	//配置etcd 参数
-	if err = initEtcdConfig();err != nil {
+	if err = initEtcdConfig(); err != nil {
 		return
 	}
 
 	//配置日志文件相关
-	if err = initLogConfig();err != nil {
+	if err = initLogConfig(); err != nil {
 		return
 	}
 
 	//频率限制
-	if err = initLimitConfig();err != nil {
+	if err = initLimitConfig(); err != nil {
 		return
 	}
 	return

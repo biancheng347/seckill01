@@ -2,13 +2,10 @@ package models
 
 import (
 	"github.com/garyburd/redigo/redis"
+	"seckill01/structModel"
 	"sync"
 	"time"
 )
-
-
-
-
 
 type SecResult struct {
 	ProductId int
@@ -33,12 +30,12 @@ func NewSecRequest() *SecRequest {
 	return &SecRequest{}
 }
 
-type RedisConf struct {
-	RedisAddr        string
-	RedisMaxIdle     int
-	RedisMaxActive   int
-	RedisIdleTimeout int
-}
+//type RedisConf struct {
+//	RedisAddr        string
+//	RedisMaxIdle     int
+//	RedisMaxActive   int
+//	RedisIdleTimeout int
+//}
 
 type SecProductInfoConf struct {
 	ProductId int
@@ -49,31 +46,31 @@ type SecProductInfoConf struct {
 	Remain    int
 }
 
-type AccessLimitConf struct {
-	IPSecAccessLimit   int
-	UserSecAccessLimit int
-	IPMinAccessLimit   int
-	UserMinAccessLimit int
-}
+//type AccessLimitConf struct {
+//	IPSecAccessLimit   int
+//	UserSecAccessLimit int
+//	IPMinAccessLimit   int
+//	UserMinAccessLimit int
+//}
 
-type EtcdConfParam struct{
-	EtcdAddr          string
-	Timeout           int
-}
-
-type EtcdConf struct{
-	EtcdConfParam
-	EtcdSecKeyPrefix  string
-	EtcdSecProductKey string
-}
+//type EtcdConfParam struct{
+//	EtcdAddr          string
+//	Timeout           int
+//}
+//
+//type EtcdConf struct{
+//	EtcdConfParam
+//	EtcdSecKeyPrefix  string
+//	EtcdSecProductKey string
+//}
 
 
 type SecKillConf struct {
-	RedisBlackConf        RedisConf
-	RedisLayerToProxyConf RedisConf
-	RedisProxyToLayerConf RedisConf
+	RedisBlackConf        structModel.RedisConf
+	RedisLayerToProxyConf structModel.RedisConf
+	RedisProxyToLayerConf structModel.RedisConf
 
-	EtcdConf EtcdConf
+	EtcdConf structModel.EtcdConf
 
 	BlackRedisPool        *redis.Pool
 	ProxyToLayerRedisPool *redis.Pool
@@ -101,7 +98,7 @@ type SecKillConf struct {
 
 	CookieSecretKey string
 	ReferWhiteList []string
-	AccessLimitConf   AccessLimitConf
+	AccessLimitConf  structModel.AccessLimitConf
 	secLimitMgr       *SecLimitMgr //
 
 }
