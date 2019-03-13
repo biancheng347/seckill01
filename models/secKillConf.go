@@ -3,7 +3,35 @@ package models
 import (
 	"github.com/garyburd/redigo/redis"
 	"sync"
+	"time"
 )
+
+
+
+
+
+type SecResult struct {
+	ProductId int
+	UserId    int
+	Code      int
+	Token     string
+}
+
+type SecRequest struct {
+	ProductId    int
+	Source       string
+	AuthCode     string
+	SecTime      string
+	Nance        string
+	UserId       int
+	UserAuthSign string
+	AccessTime   time.Time
+	ClientAddr   string
+}
+
+func NewSecRequest() *SecRequest {
+	return &SecRequest{}
+}
 
 type RedisConf struct {
 	RedisAddr        string
@@ -45,6 +73,8 @@ type SecKillConf struct {
 	RedisLayerToProxyConf RedisConf
 	RedisProxyToLayerConf RedisConf
 
+	EtcdConf EtcdConf
+
 	BlackRedisPool        *redis.Pool
 	ProxyToLayerRedisPool *redis.Pool
 	LayerToProxyRedisPool *redis.Pool
@@ -69,7 +99,6 @@ type SecKillConf struct {
 	UserConnMap     map[string]chan *SecResult //
 	UserConnMapLock sync.Mutex
 
-	EtcdConf EtcdConf
 	CookieSecretKey string
 	ReferWhiteList []string
 	AccessLimitConf   AccessLimitConf

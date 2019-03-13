@@ -7,6 +7,7 @@ type TimeLimit interface {
 	Check(nowTime int64) int
 }
 
+// min implement TimeLimit interface
 type MinLimit struct {
 	count   int
 	curTime int64
@@ -30,6 +31,7 @@ func (m *MinLimit) Check(nowTime int64) int {
 	return m.count
 }
 
+//SecLimit implement TimeLimit interface
 type SecLimit struct {
 	count   int
 	curTime int64
@@ -55,6 +57,7 @@ func (s *SecLimit) Check(nowTime int64) int {
 	return s.count
 }
 
+//manage Limit
 type Limit struct {
 	secLimit TimeLimit
 	minLimit TimeLimit
