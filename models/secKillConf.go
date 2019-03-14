@@ -47,21 +47,32 @@ type BlackConf struct{
 	ipBlackMap        map[string]bool //
 }
 
-type SecKillConf struct {
-	BlackConf
-
+type LayerToProxyConf struct {
 	RedisLayerToProxyConf structModel.RedisConf
-	RedisProxyToLayerConf structModel.RedisConf
-
-	EtcdConf structModel.EtcdConf
-
-	ProxyToLayerRedisPool *redis.Pool
 	LayerToProxyRedisPool *redis.Pool
-
 	WriteLayerToProxyGoroutineNum int
 	ReadLayerToProxyGoroutineNum  int
+}
+
+//type ProxyToLayerConf struct{
+//	RedisProxyToLayerConf structModel.RedisConf
+//	ProxyToLayerRedisPool *redis.Pool
+//	WriteProxyToLayerGoroutineNum int
+//	ReadProxyToLayerGoroutineNum  int
+//}
+
+
+type SecKillConf struct {
+	BlackConf
+	LayerToProxyConf
+	RedisProxyToLayerConf structModel.RedisConf
+	ProxyToLayerRedisPool *redis.Pool
 	WriteProxyToLayerGoroutineNum int
 	ReadProxyToLayerGoroutineNum  int
+	
+	EtcdConf structModel.EtcdConf
+
+
 
 
 
