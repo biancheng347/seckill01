@@ -40,15 +40,21 @@ type SecProductInfoConf struct {
 	Remain    int
 }
 
+type BlackConf struct{
+	RedisBlackConf        structModel.RedisConf
+	BlackRedisPool        *redis.Pool
+	idBlackMap        map[int]bool //
+	ipBlackMap        map[string]bool //
+}
 
 type SecKillConf struct {
-	RedisBlackConf        structModel.RedisConf
+	BlackConf
+
 	RedisLayerToProxyConf structModel.RedisConf
 	RedisProxyToLayerConf structModel.RedisConf
 
 	EtcdConf structModel.EtcdConf
 
-	BlackRedisPool        *redis.Pool
 	ProxyToLayerRedisPool *redis.Pool
 	LayerToProxyRedisPool *redis.Pool
 
@@ -57,8 +63,7 @@ type SecKillConf struct {
 	WriteProxyToLayerGoroutineNum int
 	ReadProxyToLayerGoroutineNum  int
 
-	idBlackMap        map[int]bool //
-	ipBlackMap        map[string]bool //
+
 
 	Logs structModel.LogsConf
 
@@ -81,8 +86,8 @@ type SecKillConf struct {
 func NewSecKillConf() *SecKillConf {
 	return &SecKillConf{
 		SecProductInfoMap: make(map[int]*SecProductInfoConf, 1024),
-		idBlackMap: make(map[int]bool,10000),
-		ipBlackMap: make(map[string]bool,10000),
+		//idBlackMap: make(map[int]bool,10000),
+		//ipBlackMap: make(map[string]bool,10000),
 		secLimitMgr: &SecLimitMgr{
 			UserLimitMap:make(map[int]*Limit,10000),
 			IpLimitMap:make(map[string]*Limit,10000),
