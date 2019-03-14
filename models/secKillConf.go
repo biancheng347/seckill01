@@ -4,33 +4,32 @@ import (
 	"github.com/garyburd/redigo/redis"
 	"seckill01/structModel"
 	"sync"
-	"time"
 )
 
-type SecResult struct {
-	ProductId int
-	UserId    int
-	Code      int
-	Token     string
-}
+//type SecResult struct {
+//	ProductId int
+//	UserId    int
+//	Code      int
+//	Token     string
+//}
+//
+//type SecRequest struct {
+//	ProductId    int
+//	Source       string
+//	AuthCode     string
+//	SecTime      string
+//	Nance        string
+//	UserId       int
+//	UserAuthSign string
+//	AccessTime   time.Time
+//	ClientAddr   string
+//	ResultChan chan *SecResult
+//	CloseNotify <-chan bool
+//}
 
-type SecRequest struct {
-	ProductId    int
-	Source       string
-	AuthCode     string
-	SecTime      string
-	Nance        string
-	UserId       int
-	UserAuthSign string
-	AccessTime   time.Time
-	ClientAddr   string
-	ResultChan chan *SecResult
-	CloseNotify <-chan bool
-}
-
-func NewSecRequest() *SecRequest {
-	return &SecRequest{}
-}
+//func NewSecRequest() *SecRequest {
+//	return &SecRequest{}
+//}
 
 type SecProductInfoConf struct {
 	ProductId int
@@ -65,10 +64,10 @@ type SecKillConf struct {
 	RWSecProductLock  sync.RWMutex
 	SecProductInfoMap map[int]*SecProductInfoConf //
 
-	SecReqChan     chan *SecRequest//
+	SecReqChan     chan *structModel.SecRequest//
 	SecReqChanSize int
 
-	UserConnMap     map[string]chan *SecResult //
+	UserConnMap     map[string]chan *structModel.SecResult //
 	UserConnMapLock sync.Mutex
 
 	CookieSecretKey string
@@ -87,8 +86,8 @@ func NewSecKillConf() *SecKillConf {
 			UserLimitMap:make(map[int]*Limit,10000),
 			IpLimitMap:make(map[string]*Limit,10000),
 		},
-		SecReqChan: make(chan *SecRequest,10000),
-		UserConnMap: make(map[string]chan *SecResult,10000),
+		SecReqChan: make(chan *structModel.SecRequest,10000),
+		UserConnMap: make(map[string]chan *structModel.SecResult,10000),
 	}
 }
 

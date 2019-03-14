@@ -3,10 +3,11 @@ package models
 import (
 	"fmt"
 	"github.com/astaxie/beego/logs"
+	"seckill01/structModel"
 	"time"
 )
 
-func antiSpam(req *SecRequest) (err error) {
+func antiSpam(req *structModel.SecRequest) (err error) {
 
 	if seckillconf.idBlackMap == nil || seckillconf.ipBlackMap == nil {
 		err = fmt.Errorf("client is closed")
@@ -131,7 +132,7 @@ func secInfoByIf(productId int) (data map[string]interface{}, code int, err erro
 	return
 }
 
-func (req *SecRequest) SecKill() (data map[string]interface{}, code int, err error) {
+func SecKill(req *structModel.SecRequest) (data map[string]interface{}, code int, err error) {
 	seckillconf.RWSecProductLock.RLock()
 	defer seckillconf.RWSecProductLock.RUnlock()
 

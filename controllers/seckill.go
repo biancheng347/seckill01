@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"seckill01/models"
+	"seckill01/structModel"
 	"strings"
 	"time"
 )
@@ -67,7 +68,7 @@ func (s *SecKillController) SecKillProduct() {
 		result[Message] = "参数解析错误"
 	}
 
-	secRequest := models.NewSecRequest()
+	secRequest := structModel.NewSecRequest()
 
 	if source, ok := mapStrings["src"]; ok {
 		secRequest.Source = source
@@ -110,7 +111,7 @@ func (s *SecKillController) SecKillProduct() {
 
 	fmt.Println("client request ", secRequest)
 
-	data, code, err := secRequest.SecKill()
+	data, code, err := models.SecKill(secRequest)
 	if err != nil {
 		result[Code] = code
 		result[Message] = "invalid product Id"

@@ -74,7 +74,7 @@ func initProxyToLayerRedis() (err error) {
 }
 
 func WriteHandle() {
-	f := func(req *SecRequest) {
+	f := func(req *structModel.SecRequest) {
 		conn := seckillconf.ProxyToLayerRedisPool.Get()
 		defer  conn.Close()
 
@@ -111,7 +111,7 @@ func ReadHandle() {
 			return
 		}
 		logs.Debug("rpop from redis succ: data: %s",string(data))
-		var result SecResult
+		var result structModel.SecResult
 		if	err = json.Unmarshal([]byte(data),&result); err != nil {
 			logs.Error("json unmarshal failed,err:%v",err)
 			return
