@@ -2,7 +2,7 @@ package config
 
 import (
 	"seckill01/models"
-	"seckill01/structModel"
+	"seckill01/base"
 )
 
 var (
@@ -28,11 +28,11 @@ func initRedisLayerToProxyConfig() (err error) {
 		"redis_layerToProxy_idle_timeout"); err != nil {
 		return
 	}
-	if err = structModel.AppConfigIntValue(&secKillConf.WriteLayerToProxyGoroutineNum, "write_layerToProxy_goroutine_num"); err != nil {
+	if err = base.AppConfigIntValue(&secKillConf.WriteLayerToProxyGoroutineNum, "write_layerToProxy_goroutine_num"); err != nil {
 		return
 	}
 
-	if err = structModel.AppConfigIntValue(&secKillConf.ReadLayerToProxyGoroutineNum, "read_layerToProxy_goroutine_num"); err != nil {
+	if err = base.AppConfigIntValue(&secKillConf.ReadLayerToProxyGoroutineNum, "read_layerToProxy_goroutine_num"); err != nil {
 		return
 	}
 	return
@@ -46,11 +46,11 @@ func initRedisProxyToLayerConfig() (err error) {
 		"redis_proxyToLayer_idle_timeout"); err != nil {
 		return
 	}
-	if err = structModel.AppConfigIntValue(&secKillConf.WriteProxyToLayerGoroutineNum, "write_proxyToLayer_goroutine_num"); err != nil {
+	if err = base.AppConfigIntValue(&secKillConf.WriteProxyToLayerGoroutineNum, "write_proxyToLayer_goroutine_num"); err != nil {
 		return
 	}
 
-	if err = structModel.AppConfigIntValue(&secKillConf.ReadProxyToLayerGoroutineNum, "read_proxyToLayer_goroutine_num"); err != nil {
+	if err = base.AppConfigIntValue(&secKillConf.ReadProxyToLayerGoroutineNum, "read_proxyToLayer_goroutine_num"); err != nil {
 		return
 	}
 	return
@@ -60,7 +60,7 @@ func initLogConfig() (err error) {
 	if err = secKillConf.Logs.InitLogConfig(); err != nil {
 		return
 	}
-	if err = structModel.AppConfigStringValue(&secKillConf.CookieSecretKey, "cookie_secretkey"); err != nil {
+	if err = base.AppConfigStringValue(&secKillConf.CookieSecretKey, "cookie_secretkey"); err != nil {
 		return
 	}
 	return

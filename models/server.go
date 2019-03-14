@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/garyburd/redigo/redis"
-	"seckill01/structModel"
+	"seckill01/base"
 	"strconv"
 	"time"
 )
@@ -58,7 +58,7 @@ func loadBlackList() (err error) {
 	return
 }
 
-func initRedisValue(redisPool **redis.Pool,conf structModel.RedisConf) (err error) {
+func initRedisValue(redisPool **redis.Pool,conf base.RedisConf) (err error) {
 	if err = conf.InitRedisValue(redisPool);err != nil {
 		return
 	}
@@ -74,7 +74,7 @@ func initProxyToLayerRedis() (err error) {
 }
 
 func WriteHandle() {
-	f := func(req *structModel.SecRequest) {
+	f := func(req *base.SecRequest) {
 		conn := seckillconf.ProxyToLayerRedisPool.Get()
 		defer  conn.Close()
 
@@ -111,7 +111,7 @@ func ReadHandle() {
 			return
 		}
 		logs.Debug("rpop from redis succ: data: %s",string(data))
-		var result structModel.SecResult
+		var result base.SecResult
 		if	err = json.Unmarshal([]byte(data),&result); err != nil {
 			logs.Error("json unmarshal failed,err:%v",err)
 			return

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"seckill01/models"
-	"seckill01/structModel"
+	"seckill01/base"
 	"strings"
 	"time"
 )
@@ -68,7 +68,7 @@ func (s *SecKillController) SecKillProduct() {
 		result[Message] = "参数解析错误"
 	}
 
-	secRequest := structModel.NewSecRequest()
+	secRequest := base.NewSecRequest()
 
 	if source, ok := mapStrings["src"]; ok {
 		secRequest.Source = source

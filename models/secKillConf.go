@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/garyburd/redigo/redis"
-	"seckill01/structModel"
+	"seckill01/base"
 	"sync"
 )
 
@@ -41,22 +41,22 @@ type SecProductInfoConf struct {
 }
 
 type BlackConf struct{
-	RedisBlackConf        structModel.RedisConf
-	BlackRedisPool        *redis.Pool
-	idBlackMap        map[int]bool //
-	ipBlackMap        map[string]bool //
+	RedisBlackConf base.RedisConf
+	BlackRedisPool *redis.Pool
+	idBlackMap     map[int]bool //
+	ipBlackMap     map[string]bool //
 }
 
 type LayerToProxyConf struct {
-	RedisLayerToProxyConf structModel.RedisConf
-	LayerToProxyRedisPool *redis.Pool
+	RedisLayerToProxyConf         base.RedisConf
+	LayerToProxyRedisPool         *redis.Pool
 	WriteLayerToProxyGoroutineNum int
 	ReadLayerToProxyGoroutineNum  int
 }
 
 type ProxyToLayerConf struct{
-	RedisProxyToLayerConf structModel.RedisConf
-	ProxyToLayerRedisPool *redis.Pool
+	RedisProxyToLayerConf         base.RedisConf
+	ProxyToLayerRedisPool         *redis.Pool
 	WriteProxyToLayerGoroutineNum int
 	ReadProxyToLayerGoroutineNum  int
 }
@@ -67,22 +67,22 @@ type SecKillConf struct {
 	LayerToProxyConf
 	ProxyToLayerConf
 	
-	Logs structModel.LogsConf
+	Logs base.LogsConf
 
 	RWSecProductLock  sync.RWMutex
 	SecProductInfoMap map[int]*SecProductInfoConf //
 
-	SecReqChan     chan *structModel.SecRequest//
+	SecReqChan     chan *base.SecRequest //
 	SecReqChanSize int
 
-	UserConnMap     map[string]chan *structModel.SecResult //
+	UserConnMap     map[string]chan *base.SecResult //
 	UserConnMapLock sync.Mutex
 
 	CookieSecretKey string
-	ReferWhiteList []string
-	AccessLimitConf  structModel.AccessLimitConf
-	secLimitMgr       *SecLimitMgr //
-	EtcdConf structModel.EtcdConf
+	ReferWhiteList  []string
+	AccessLimitConf base.AccessLimitConf
+	secLimitMgr     *SecLimitMgr //
+	EtcdConf        base.EtcdConf
 }
 
 func NewSecKillConf() *SecKillConf {
@@ -94,8 +94,8 @@ func NewSecKillConf() *SecKillConf {
 			UserLimitMap:make(map[int]*Limit,10000),
 			IpLimitMap:make(map[string]*Limit,10000),
 		},
-		SecReqChan: make(chan *structModel.SecRequest,10000),
-		UserConnMap: make(map[string]chan *structModel.SecResult,10000),
+		SecReqChan: make(chan *base.SecRequest,10000),
+		UserConnMap: make(map[string]chan *base.SecResult,10000),
 	}
 }
 

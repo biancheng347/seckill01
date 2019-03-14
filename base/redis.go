@@ -1,4 +1,4 @@
-package structModel
+package base
 
 import (
 	"github.com/astaxie/beego/logs"

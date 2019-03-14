@@ -1,4 +1,4 @@
-package structModel
+package base
 
 type AccessLimitConf struct {
 	IPSecAccessLimit   int
