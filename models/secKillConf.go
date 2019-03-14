@@ -54,28 +54,19 @@ type LayerToProxyConf struct {
 	ReadLayerToProxyGoroutineNum  int
 }
 
-//type ProxyToLayerConf struct{
-//	RedisProxyToLayerConf structModel.RedisConf
-//	ProxyToLayerRedisPool *redis.Pool
-//	WriteProxyToLayerGoroutineNum int
-//	ReadProxyToLayerGoroutineNum  int
-//}
+type ProxyToLayerConf struct{
+	RedisProxyToLayerConf structModel.RedisConf
+	ProxyToLayerRedisPool *redis.Pool
+	WriteProxyToLayerGoroutineNum int
+	ReadProxyToLayerGoroutineNum  int
+}
 
 
 type SecKillConf struct {
 	BlackConf
 	LayerToProxyConf
-	RedisProxyToLayerConf structModel.RedisConf
-	ProxyToLayerRedisPool *redis.Pool
-	WriteProxyToLayerGoroutineNum int
-	ReadProxyToLayerGoroutineNum  int
+	ProxyToLayerConf
 	
-	EtcdConf structModel.EtcdConf
-
-
-
-
-
 	Logs structModel.LogsConf
 
 	RWSecProductLock  sync.RWMutex
@@ -91,7 +82,7 @@ type SecKillConf struct {
 	ReferWhiteList []string
 	AccessLimitConf  structModel.AccessLimitConf
 	secLimitMgr       *SecLimitMgr //
-
+	EtcdConf structModel.EtcdConf
 }
 
 func NewSecKillConf() *SecKillConf {
