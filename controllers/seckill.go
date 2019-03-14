@@ -5,8 +5,6 @@ import (
 	"github.com/astaxie/beego"
 	"seckill01/models"
 	"seckill01/base"
-	"strings"
-	"time"
 )
 
 type SecKillController struct {
@@ -68,47 +66,7 @@ func (s *SecKillController) SecKillProduct() {
 		result[Message] = "参数解析错误"
 	}
 
-	secRequest := base.NewSecRequest()
-
-	if source, ok := mapStrings["src"]; ok {
-		secRequest.Source = source
-	}
-
-	if authcode, ok := mapStrings["authcode"]; ok {
-		secRequest.AuthCode = authcode
-	}
-
-	if secTime, ok := mapStrings["time"]; ok {
-		secRequest.SecTime = secTime
-	}
-
-	if nance, ok := mapStrings["nance"]; ok {
-		secRequest.Nance = nance
-	}
-
-	if productId, ok := mapInts["productId"]; ok {
-		secRequest.ProductId = productId
-	}
-
-	if userId, ok := mapInts["user_id"]; ok {
-		secRequest.UserId = userId
-	}
-
-	userAuthSign := s.Ctx.GetCookie("userAuthSign")
-	if len(userAuthSign) > 0 {
-		secRequest.UserAuthSign = userAuthSign
-	}
-
-	secRequest.AccessTime = time.Now()
-
-	addr := s.Ctx.Request.RemoteAddr
-	if len(addr) > 0 {
-		addrSplit := strings.Split(addr, ":")
-		if len(addrSplit) > 0 {
-			secRequest.ClientAddr = addrSplit[0]
-		}
-	}
-
+	secRequest := base.SecReeustForDic(s.Ctx,mapStrings,mapInts)
 	fmt.Println("client request ", secRequest)
 
 	data, code, err := models.SecKill(secRequest)

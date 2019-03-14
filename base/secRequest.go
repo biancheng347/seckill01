@@ -2,6 +2,8 @@ package base
 
 import (
 	"fmt"
+	"github.com/astaxie/beego/context"
+	"strings"
 	"time"
 )
 
@@ -28,6 +30,49 @@ type SecRequest struct {
 
 func NewSecRequest() *SecRequest {
 	return &SecRequest{}
+}
+
+func SecReeustForDic(ctx *context.Context,mapStrings map[string]string,mapInts map[string]int) (secRequest *SecRequest) {
+	secRequest = NewSecRequest()
+	if source, ok := mapStrings["src"]; ok {
+		secRequest.Source = source
+	}
+
+	if authcode, ok := mapStrings["authcode"]; ok {
+		secRequest.AuthCode = authcode
+	}
+
+	if secTime, ok := mapStrings["time"]; ok {
+		secRequest.SecTime = secTime
+	}
+
+	if nance, ok := mapStrings["nance"]; ok {
+		secRequest.Nance = nance
+	}
+
+	if productId, ok := mapInts["productId"]; ok {
+		secRequest.ProductId = productId
+	}
+
+	if userId, ok := mapInts["user_id"]; ok {
+		secRequest.UserId = userId
+	}
+
+	userAuthSign := ctx.GetCookie("userAuthSign")
+	if len(userAuthSign) > 0 {
+		secRequest.UserAuthSign = userAuthSign
+	}
+
+	secRequest.AccessTime = time.Now()
+
+	addr := ctx.Request.RemoteAddr
+	if len(addr) > 0 {
+		addrSplit := strings.Split(addr, ":")
+		if len(addrSplit) > 0 {
+			secRequest.ClientAddr = addrSplit[0]
+		}
+	}
+	return
 }
 
 
