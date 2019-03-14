@@ -16,7 +16,7 @@ var (
 
 
 func initLogger() (err error) {
-	if err = secKillConf.Logs.InitLogger();err != nil {
+	if err = secKillConf.LogsConf.InitLogger();err != nil {
 		return
 	}
 	return

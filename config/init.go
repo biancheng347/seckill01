@@ -57,7 +57,7 @@ func initRedisProxyToLayerConfig() (err error) {
 }
 
 func initLogConfig() (err error) {
-	if err = secKillConf.Logs.InitLogConfig(); err != nil {
+	if err = secKillConf.LogsConf.InitLogConfig(); err != nil {
 		return
 	}
 	if err = base.AppConfigStringValue(&secKillConf.CookieSecretKey, "cookie_secretkey"); err != nil {

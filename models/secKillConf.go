@@ -90,7 +90,7 @@ type SecKillConf struct {
 	LayerToProxyConf
 	ProxyToLayerConf
 	
-	Logs base.LogsConf
+	base.LogsConf
 
 	SecProduct
 
