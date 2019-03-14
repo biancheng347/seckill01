@@ -102,7 +102,7 @@ type SecKillConf struct {
 	CookieSecretKey string
 	ReferWhiteList  []string
 
-	EtcdConf        base.EtcdConf
+	base.EtcdConf
 }
 
 func NewSecKillConf() *SecKillConf {
