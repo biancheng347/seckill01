@@ -154,27 +154,12 @@ func SecKill(req *structModel.SecRequest) (data map[string]interface{}, code int
 	userKey := fmt.Sprintf("%s_%s", req.UserId, req.ProductId)
 	seckillconf.UserConnMap[userKey] = req.ResultChan
 	seckillconf.SecReqChan <- req
-
-	ticker := time.NewTicker(time.Second * 10)
 	defer func() {
-		ticker.Stop()
 		seckillconf.UserConnMapLock.Lock()
 		delete(seckillconf.UserConnMap, userKey)
 		seckillconf.UserConnMapLock.Unlock()
 	}()
 
-	select {
-	case <-ticker.C:
-		code = ErrProcessTimeout
-		err = fmt.Errorf("request timtout")
-	case <-req.CloseNotify:
-		code = ErrClientClosed
-		err = fmt.Errorf("client alread close")
-	case result := <-req.ResultChan:
-		code = result.Code
-		data["productId"] = result.ProductId
-		data["token"] = result.Token
-		data["user_id"] = result.UserId
-	}
+	data ,code ,err = req.ReqSelect()
 	return
 }
