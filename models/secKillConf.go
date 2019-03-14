@@ -89,20 +89,14 @@ type SecKillConf struct {
 	BlackConf
 	LayerToProxyConf
 	ProxyToLayerConf
-	
-	base.LogsConf
-
-	SecProduct
-
 	SecReqChanConf
-
 	UseConn
-
+	SecProduct
 	SecLimitConf
+	base.LogsConf
+	base.EtcdConf
 	CookieSecretKey string
 	ReferWhiteList  []string
-
-	base.EtcdConf
 }
 
 func NewSecKillConf() *SecKillConf {
