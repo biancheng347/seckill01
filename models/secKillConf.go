@@ -80,6 +80,10 @@ type SecReqChanConf struct {
 	SecReqChanSize int
 }
 
+type SecLimitConf struct {
+	AccessLimitConf base.AccessLimitConf
+	secLimitMgr     *SecLimitMgr //
+}
 
 type SecKillConf struct {
 	BlackConf
@@ -94,10 +98,10 @@ type SecKillConf struct {
 
 	UseConn
 
+	SecLimitConf
 	CookieSecretKey string
 	ReferWhiteList  []string
-	AccessLimitConf base.AccessLimitConf
-	secLimitMgr     *SecLimitMgr //
+
 	EtcdConf        base.EtcdConf
 }
 
@@ -106,10 +110,10 @@ func NewSecKillConf() *SecKillConf {
 		//SecProductInfoMap: make(map[int]*SecProductInfoConf, 1024),
 		//idBlackMap: make(map[int]bool,10000),
 		//ipBlackMap: make(map[string]bool,10000),
-		secLimitMgr: &SecLimitMgr{
-			UserLimitMap:make(map[int]*Limit,10000),
-			IpLimitMap:make(map[string]*Limit,10000),
-		},
+		//secLimitMgr: &SecLimitMgr{
+		//	UserLimitMap:make(map[int]*Limit,10000),
+		//	IpLimitMap:make(map[string]*Limit,10000),
+		//},
 		//SecReqChan: make(chan *base.SecRequest,10000),
 		//UserConnMap: make(map[string]chan *base.SecResult,10000),
 	}
