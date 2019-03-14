@@ -61,6 +61,25 @@ type ProxyToLayerConf struct{
 	ReadProxyToLayerGoroutineNum  int
 }
 
+type SecRequet struct  {
+
+}
+
+type UseConn struct {
+	UserConnMap     map[string]chan *base.SecResult //
+	UserConnMapLock sync.Mutex
+}
+
+type SecProduct struct {
+	RWSecProductLock  sync.RWMutex
+	SecProductInfoMap map[int]*SecProductInfoConf //
+}
+
+type SecReqChanConf struct {
+	SecReqChan     chan *base.SecRequest //
+	SecReqChanSize int
+}
+
 
 type SecKillConf struct {
 	BlackConf
@@ -69,14 +88,11 @@ type SecKillConf struct {
 	
 	Logs base.LogsConf
 
-	RWSecProductLock  sync.RWMutex
-	SecProductInfoMap map[int]*SecProductInfoConf //
+	SecProduct
 
-	SecReqChan     chan *base.SecRequest //
-	SecReqChanSize int
+	SecReqChanConf
 
-	UserConnMap     map[string]chan *base.SecResult //
-	UserConnMapLock sync.Mutex
+	UseConn
 
 	CookieSecretKey string
 	ReferWhiteList  []string
@@ -87,15 +103,15 @@ type SecKillConf struct {
 
 func NewSecKillConf() *SecKillConf {
 	return &SecKillConf{
-		SecProductInfoMap: make(map[int]*SecProductInfoConf, 1024),
+		//SecProductInfoMap: make(map[int]*SecProductInfoConf, 1024),
 		//idBlackMap: make(map[int]bool,10000),
 		//ipBlackMap: make(map[string]bool,10000),
 		secLimitMgr: &SecLimitMgr{
 			UserLimitMap:make(map[int]*Limit,10000),
 			IpLimitMap:make(map[string]*Limit,10000),
 		},
-		SecReqChan: make(chan *base.SecRequest,10000),
-		UserConnMap: make(map[string]chan *base.SecResult,10000),
+		//SecReqChan: make(chan *base.SecRequest,10000),
+		//UserConnMap: make(map[string]chan *base.SecResult,10000),
 	}
 }
 
