@@ -40,6 +40,7 @@ type SecProductInfoConf struct {
 	Remain    int
 }
 
+
 type SecKillConf struct {
 	RedisBlackConf        structModel.RedisConf
 	RedisLayerToProxyConf structModel.RedisConf
