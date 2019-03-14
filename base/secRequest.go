@@ -24,15 +24,17 @@ type SecRequest struct {
 	UserAuthSign string
 	AccessTime   time.Time
 	ClientAddr   string
-	ResultChan chan *SecResult
-	CloseNotify <-chan bool
+	ResultChan   chan *SecResult
+	CloseNotify  <-chan bool
 }
 
 func NewSecRequest() *SecRequest {
-	return &SecRequest{}
+	return &SecRequest{
+		ResultChan: make(chan *SecResult),
+	}
 }
 
-func SecReeustForDic(ctx *context.Context,mapStrings map[string]string,mapInts map[string]int) (secRequest *SecRequest) {
+func SecRequstForDic(ctx *context.Context, mapStrings map[string]string, mapInts map[string]int) (secRequest *SecRequest) {
 	secRequest = NewSecRequest()
 	if source, ok := mapStrings["src"]; ok {
 		secRequest.Source = source
@@ -75,8 +77,7 @@ func SecReeustForDic(ctx *context.Context,mapStrings map[string]string,mapInts m
 	return
 }
 
-
-func (p *SecRequest)ReqSelect() (data map[string]interface{}, code int, err error) {
+func (p *SecRequest) ReqSelect() (data map[string]interface{}, code int, err error) {
 	if data == nil {
 		return
 	}

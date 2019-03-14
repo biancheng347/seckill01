@@ -6,31 +6,6 @@ import (
 	"sync"
 )
 
-//type SecResult struct {
-//	ProductId int
-//	UserId    int
-//	Code      int
-//	Token     string
-//}
-//
-//type SecRequest struct {
-//	ProductId    int
-//	Source       string
-//	AuthCode     string
-//	SecTime      string
-//	Nance        string
-//	UserId       int
-//	UserAuthSign string
-//	AccessTime   time.Time
-//	ClientAddr   string
-//	ResultChan chan *SecResult
-//	CloseNotify <-chan bool
-//}
-
-//func NewSecRequest() *SecRequest {
-//	return &SecRequest{}
-//}
-
 type SecProductInfoConf struct {
 	ProductId int
 	StartTime int64
@@ -40,10 +15,10 @@ type SecProductInfoConf struct {
 	Remain    int
 }
 
-type BlackConf struct{
+type BlackConf struct {
 	RedisBlackConf base.RedisConf
 	BlackRedisPool *redis.Pool
-	idBlackMap     map[int]bool //
+	idBlackMap     map[int]bool    //
 	ipBlackMap     map[string]bool //
 }
 
@@ -54,15 +29,11 @@ type LayerToProxyConf struct {
 	ReadLayerToProxyGoroutineNum  int
 }
 
-type ProxyToLayerConf struct{
+type ProxyToLayerConf struct {
 	RedisProxyToLayerConf         base.RedisConf
 	ProxyToLayerRedisPool         *redis.Pool
 	WriteProxyToLayerGoroutineNum int
 	ReadProxyToLayerGoroutineNum  int
-}
-
-type SecRequet struct  {
-
 }
 
 type UseConn struct {
@@ -112,4 +83,3 @@ func NewSecKillConf() *SecKillConf {
 		//UserConnMap: make(map[string]chan *base.SecResult,10000),
 	}
 }
-

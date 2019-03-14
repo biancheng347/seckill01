@@ -66,7 +66,7 @@ func (s *SecKillController) SecKillProduct() {
 		result[Message] = "参数解析错误"
 	}
 
-	secRequest := base.SecReeustForDic(s.Ctx,mapStrings,mapInts)
+	secRequest := base.SecRequstForDic(s.Ctx,mapStrings,mapInts)
 	fmt.Println("client request ", secRequest)
 
 	data, code, err := models.SecKill(secRequest)
